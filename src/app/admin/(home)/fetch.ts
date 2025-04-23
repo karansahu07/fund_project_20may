@@ -3,7 +3,7 @@ export async function getOverviewData() {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
   return {
-    views: {
+    invest: {
       value: 3456,
       growthRate: 0.43,
     },
@@ -11,11 +11,11 @@ export async function getOverviewData() {
       value: 4220,
       growthRate: 4.35,
     },
-    products: {
+    values: {
       value: 3456,
       growthRate: 2.59,
     },
-    users: {
+    units: {
       value: 3456,
       growthRate: -0.95,
     },

@@ -27,9 +27,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body className="h-screen overflow-hidden">
         <Providers>
           <NextTopLoader color="#5750F1" showSpinner={false} />
-          <main className="h-full w-full overflow-hidden p-4 md:p-6 2xl:p-10">
+          {/* <main className="h-full w-full overflow-hidden p-4 md:p-6 2xl:p-10">
             {children}
-          </main>
+          </main> */}
+           {children}
         </Providers>
       </body>
     </html>

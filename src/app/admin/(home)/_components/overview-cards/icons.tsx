@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 
 type SVGPropsType = SVGProps<SVGSVGElement>;
 
-export function Views(props: SVGPropsType) {
+export function Invest(props: SVGPropsType) {
   return (
     <svg width={58} height={58} viewBox="0 0 58 58" fill="none" {...props}>
       <circle cx={29} cy={29} r={29} fill="#3FD97F" />
@@ -34,7 +34,7 @@ export function Profit(props: SVGPropsType) {
   );
 }
 
-export function Product(props: SVGPropsType) {
+export function Values(props: SVGPropsType) {
   return (
     <svg width={58} height={58} viewBox="0 0 58 58" fill="none" {...props}>
       <circle cx={29} cy={29} r={29} fill="#8155FF" />
@@ -46,7 +46,7 @@ export function Product(props: SVGPropsType) {
   );
 }
 
-export function Users(props: SVGPropsType) {
+export function Units(props: SVGPropsType) {
   return (
     <svg width={58} height={58} viewBox="0 0 58 58" fill="none" {...props}>
       <circle cx={29} cy={29} r={29} fill="#18BFFF" />

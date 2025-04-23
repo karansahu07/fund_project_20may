@@ -16,6 +16,7 @@ export default function SigninWithPassword() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -24,16 +25,41 @@ export default function SigninWithPassword() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setLoading(true);
+    setError("");
 
-    // Simulate API call or validation
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        setError(result.message || "Login failed");
+      } else {
+        // Redirect based on role
+        if (result.user.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/user");
+        }
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      router.push("/admin"); // Navigate to /admin after sign in
-    }, 1000);
+    }
   };
 
   return (
@@ -82,6 +108,10 @@ export default function SigninWithPassword() {
           Forgot Password?
         </Link>
       </div>
+
+      {error && (
+        <div className="mb-4 text-red-600 dark:text-red-400">{error}</div>
+      )}
 
       <div className="mb-4.5">
         <button

@@ -1,97 +1,51 @@
-"use client";
+'use client';
 
-import { compactFormat } from "@/lib/format-number";
-import type { ApexOptions } from "apexcharts";
-import dynamic from "next/dynamic";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 type PropsType = {
   data: { name: string; amount: number }[];
 };
 
-const Chart = dynamic(() => import("react-apexcharts"), {
-  ssr: false,
-});
+const COLORS = ['#808080', '#4CAF50', '#ff0000'];
 
 export function DonutChart({ data }: PropsType) {
-  const chartOptions: ApexOptions = {
-    chart: {
-      type: "donut",
-      fontFamily: "inherit",
-    },
-    colors: ["#5750F1", "#5475E5", "#8099EC", "#ADBCF2"],
-    labels: data.map((item) => item.name),
-    legend: {
-      show: true,
-      position: "bottom",
-      itemMargin: {
-        horizontal: 10,
-        vertical: 5,
-      },
-      formatter: (legendName, opts) => {
-        const { seriesPercent } = opts.w.globals;
-        return `${legendName}: ${seriesPercent[opts.seriesIndex]}%`;
-      },
-    },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: "80%",
-          background: "transparent",
-          labels: {
-            show: true,
-            total: {
-              show: true,
-              showAlways: true,
-              label: "Visitors",
-              fontSize: "16px",
-              fontWeight: "400",
-            },
-            value: {
-              show: true,
-              fontSize: "28px",
-              fontWeight: "bold",
-              formatter: (val) => compactFormat(+val),
-            },
-          },
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    responsive: [
-      {
-        breakpoint: 2600,
-        options: {
-          chart: {
-            width: 415,
-          },
-        },
-      },
-      {
-        breakpoint: 640,
-        options: {
-          chart: {
-            width: "100%",
-          },
-        },
-      },
-      {
-        breakpoint: 370,
-        options: {
-          chart: {
-            width: 260,
-          },
-        },
-      },
-    ],
-  };
-
   return (
-    <Chart
-      options={chartOptions}
-      series={data.map((item) => item.amount)}
-      type="donut"
-    />
+    <div className="w-full flex flex-col items-center bg-white p-4 rounded-xl shadow-md">
+      <p className="font-bold mb-2">Total Value</p>
+      <h2 className="text-2xl font-bold mb-4">
+        {data.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}
+      </h2>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={80}
+            innerRadius={50}
+            dataKey="amount"
+            nameKey="name"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value: number) =>
+              new Intl.NumberFormat().format(value as number)
+            }
+          />
+          <Legend verticalAlign="bottom" height={36} />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
