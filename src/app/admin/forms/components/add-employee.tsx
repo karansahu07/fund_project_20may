@@ -3,9 +3,9 @@ import { TextAreaGroup } from "@/components/FormElements/InputGroup/text-area";
 import { Select } from "@/components/FormElements/select";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 
-export function ContactForm() {
+export function AddEmployeeForm() {
   return (
-    <ShowcaseSection title="Contact Form" className="!p-6.5">
+    <ShowcaseSection title="Add Employee" className="!p-6.5">
       <form action="#">
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           <InputGroup
@@ -32,24 +32,27 @@ export function ContactForm() {
         />
 
         <InputGroup
-          label="Subject"
+          label="Phone"
+          type="phone"
+          placeholder="Enter your phone"
+          className="mb-4.5"
+        />
+        <InputGroup
+          label="Date of Joining"
           type="text"
-          placeholder="Enter your subject"
+          placeholder=""
+          className="mb-4.5"
+        />
+        <InputGroup
+          label="Date of Birth"
+          type="dob"
+          placeholder="Enter DOB"
           className="mb-4.5"
         />
 
-        <Select
-          label="Subject"
-          placeholder="Select your subject"
-          className="mb-4.5"
-          items={[
-            { label: "United States", value: "USA" },
-            { label: "United Kingdom", value: "UK" },
-            { label: "Canada", value: "Canada" },
-          ]}
-        />
+        
 
-        <TextAreaGroup label="Message" placeholder="Type your message" />
+        {/* <TextAreaGroup label="Message" placeholder="Type your message" /> */}
 
         <button className="mt-6 flex w-full justify-center rounded-lg bg-primary p-[13px] font-medium text-white hover:bg-opacity-90">
           Send Message
