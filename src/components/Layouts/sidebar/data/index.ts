@@ -18,6 +18,12 @@ export const NAV_DATA = [
       //   items: [],
       // },
       {
+        title: "Manage Employee",
+        url: "/admin/manage-employees",
+        icon: Icons.User,
+        items: [],
+      },
+      {
         title: "Profile",
         url: "/admin/profile",
         icon: Icons.User,
@@ -25,7 +31,7 @@ export const NAV_DATA = [
       },
       {
         title: "Add Employee",
-        url: "/admin/forms/",
+        url: "/admin/add-employee/",
         icon: Icons.Alphabet,
         items: [
           // {
