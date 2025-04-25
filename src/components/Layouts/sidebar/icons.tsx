@@ -83,22 +83,29 @@ export function User(props: PropsType) {
   );
 }
 
-export function Alphabet(props: PropsType) {
+export function payment(props: PropsType) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={24}
-      height={24}
-      viewBox="0 0 24 24"
-      fill="none"
-      {...props}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M2.25 7A.75.75 0 013 6.25h10a.75.75 0 010 1.5H3A.75.75 0 012.25 7zm14.25-.75a.75.75 0 01.684.442l4.5 10a.75.75 0 11-1.368.616l-1.437-3.194H14.12l-1.437 3.194a.75.75 0 11-1.368-.616l4.5-10a.75.75 0 01.684-.442zm-1.704 6.364h3.408L16.5 8.828l-1.704 3.786zM2.25 12a.75.75 0 01.75-.75h7a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zm0 5a.75.75 0 01.75-.75h5a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75z"
-        fill="currentColor"
-      />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#838A93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width={24}
+      height={24}>
+      <path d="M6 3h12"></path>
+      <path d="M6 8h12"></path>
+      <path d="m6 13 8.5 8"></path>
+      <path d="M6 13h3"></path>
+      <path d="M9 13c6.667 0 6.667-10 0-10"></path>
+    </svg>
+  );
+}
+
+
+
+export function addemployee(props: PropsType) {
+  return (
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width={24}
+      height={24}>
+      <path d="M376 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z" fill="none" stroke="#838A93" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" />
+      <path d="M288 304c-87 0-175.3 48-191.64 138.6-2 10.92 4.21 21.4 15.65 21.4H464c11.44 0 17.62-10.48 15.65-21.4C463.3 352 375 304 288 304z" fill="none" stroke="#838A93" stroke-miterlimit="10" stroke-width="32" />
+      <path fill="none" stroke="#838A93" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M88 176v112M144 232H32" />
     </svg>
   );
 }
