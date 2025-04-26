@@ -9,12 +9,14 @@ export const NAV_DATA = [
       {
         title: "Dashboard",
         url : "/admin",
+        auth: ["admin","user"],
         icon: Icons.HomeIcon,
         items: [],
       },
       {
         title: "Manage Employee",
         url: "/admin/manage-employees",
+        auth: ["admin"],
         icon: MdOutlineManageAccounts ,
         items: [],
       },

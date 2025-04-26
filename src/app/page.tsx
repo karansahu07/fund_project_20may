@@ -25,15 +25,15 @@ export default function SignIn() {
             <div className="custom-gradient-1 overflow-hidden rounded-2xl px-12.5 pt-12.5 dark:!bg-dark-2 dark:bg-none">
               <Link className="mb-10 inline-block" href="/">
                 <Image
-                  className="hidden dark:block"
-                  src={"/images/logo/logo.svg"}
+                  className="dark:hidden"
+                  src={"/images/logo/logo-dark.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
                 />
                 <Image
-                  className="dark:hidden"
-                  src={"/images/logo/logo-dark.svg"}
+                  className="hidden dark:block"
+                  src={"/images/logo/ekarigar_logo_dark_mode.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
@@ -44,12 +44,12 @@ export default function SignIn() {
               </p>
 
               <h1 className="mb-4 text-2xl font-bold text-dark dark:text-white sm:text-heading-3">
-                Welcome Back!
+                Welcome to Ekarigar Employee Welfare Fund!
               </h1>
 
               <p className="w-full max-w-[375px] font-medium text-dark-4 dark:text-dark-6">
                 Please sign in to your account by completing the necessary
-                fields below
+                fields in left
               </p>
 
               <div className="mt-31">

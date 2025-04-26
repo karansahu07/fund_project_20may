@@ -153,7 +153,7 @@ export default function AddEmployeePage() {
                   )}
                 />
               </div>
-              <Button type="submit">Add Employee</Button>
+              <Button type="submit" className="text-white">Add Employee</Button>
             </form>
           </Form>
         </CardContent>
