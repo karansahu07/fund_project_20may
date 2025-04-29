@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const user = rows[0];
 
     // Convert role_id to role string
-    const role = user.role_id === 1 ? "admin" : "user";
+    const role = user.role_id === 1 ? "admin" : "employee";
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -58,14 +58,16 @@ export default function AddEmployeePage() {
     
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between">
-        {/* <h2 className="text-3xl font-bold tracking-tight">Add Employee</h2> */}
-        <Breadcrumb pageName="Add Employee" />
+        <h2 className="text-3xl font-bold tracking-tight">Add Employee</h2>
+        {/* <Breadcrumb pageName="Add Employee" /> */}
       </div>
-      <Card>
+      <Card className="dark:bg-[#020d1a]">
+       
         <CardHeader>
           <CardTitle>Employee Information</CardTitle>
           <CardDescription>Enter the details of the new employee to add them to the system.</CardDescription>
         </CardHeader>
+       
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -153,7 +155,9 @@ export default function AddEmployeePage() {
                   )}
                 />
               </div>
-              <Button type="submit" className="text-white">Add Employee</Button>
+             <div > <Button type="submit" className="text-white mr-4">Add Employee</Button>
+             <Button type="submit" className="text-white">Update Employee</Button>
+             </div>
             </form>
           </Form>
         </CardContent>

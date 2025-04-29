@@ -1,6 +1,7 @@
 import "@/css/satoshi.css";
 import "@/css/style.css";
 
+
 import { Sidebar } from "@/components/Layouts/sidebar";
 
 import "flatpickr/dist/flatpickr.min.css";
@@ -28,20 +29,19 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <Providers>
           <NextTopLoader color="#5750F1" showSpinner={false} />
 
-          <div className="flex min-h-screen">
-            <Sidebar />
-
-            <div className="w-full bg-gray-2 dark:bg-[#020d1a]">
-              <Header />
-
-              {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
+          {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
                 {children}
               </main> */}
-              <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
+          {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden pt-4 pr-4 pl-4 md:pt-6 md:pr-6 md:pl-6 2xl:pt-10 2xl:pr-10 2xl:pl-10">
                 {children}
-              </main>
-            </div>
-          </div>
+              </main> */}
+
+          {/* <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
+                {children}
+              </main> */}
+          <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>

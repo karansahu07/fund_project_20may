@@ -11,7 +11,7 @@ import { Header } from "@/components/Layouts/header";
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import type { PropsWithChildren } from "react";
-import { Providers } from "./providers";
+import { Providers } from "../providers";
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +29,13 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <Providers>
           <NextTopLoader color="#5750F1" showSpinner={false} />
 
-          {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
+          <div className="flex min-h-screen">
+            <Sidebar />
+
+            <div className="w-full bg-gray-2 dark:bg-[#020d1a]">
+              <Header />
+
+              {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
                 {children}
               </main> */}
               {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden pt-4 pr-4 pl-4 md:pt-6 md:pr-6 md:pl-6 2xl:pt-10 2xl:pr-10 2xl:pl-10">
@@ -39,6 +45,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
               <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
                 {children}
               </main>
+
+            </div>
+          </div>
         </Providers>
       </body>
     </html>

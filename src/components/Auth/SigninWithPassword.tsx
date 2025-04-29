@@ -49,9 +49,9 @@ export default function SigninWithPassword() {
       } else {
         // Redirect based on role
         if (result.user.role === "admin") {
-          router.push("/admin");
+          router.push("/admin/admin-dashboard");
         } else {
-          router.push("/user");
+          router.push("/employees/employee-dashboard");
         }
       }
     } catch (err) {
