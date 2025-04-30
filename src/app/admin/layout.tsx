@@ -32,13 +32,16 @@ export default function RootLayout({ children }: PropsWithChildren) {
           {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
                 {children}
               </main> */}
-              {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden pt-4 pr-4 pl-4 md:pt-6 md:pr-6 md:pl-6 2xl:pt-10 2xl:pr-10 2xl:pl-10">
+          {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden pt-4 pr-4 pl-4 md:pt-6 md:pr-6 md:pl-6 2xl:pt-10 2xl:pr-10 2xl:pl-10">
                 {children}
               </main> */}
 
-              <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
+          {/* <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
                 {children}
-              </main>
+              </main> */}
+          <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>

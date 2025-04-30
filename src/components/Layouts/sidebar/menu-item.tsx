@@ -3,12 +3,28 @@ import { cva } from "class-variance-authority";
 import Link from "next/link";
 import { useSidebarContext } from "./sidebar-context";
 
+// const menuItemBaseStyles = cva(
+//   "rounded-lg px-3.5 font-medium text-white transition-all duration-200 dark:text-dark-6",
+//   {
+//     variants: {
+//       isActive: {
+//         true: "bg-[rgba(87,80,241,0.07)] text-white hover:bg-[rgba(87,80,241,0.07)] dark:bg-[#FFFFFF1A] dark:text-white",
+//         false:
+//           "hover:bg-gray-100 hover:text-dark hover:dark:bg-[#FFFFFF1A] hover:dark:text-white",
+//       },
+//     },
+//     defaultVariants: {
+//       isActive: false,
+//     },
+//   },
+// );
+
 const menuItemBaseStyles = cva(
-  "rounded-lg px-3.5 font-medium text-dark-4 transition-all duration-200 dark:text-dark-6",
+  "rounded-lg px-3.5 font-medium text-white transition-all duration-200 dark:text-dark-6",
   {
     variants: {
       isActive: {
-        true: "bg-[rgba(87,80,241,0.07)] text-primary hover:bg-[rgba(87,80,241,0.07)] dark:bg-[#FFFFFF1A] dark:text-white",
+        true: "bg-white text-dark hover:bg-white hover:text-dark dark:bg-white dark:text-dark",
         false:
           "hover:bg-gray-100 hover:text-dark hover:dark:bg-[#FFFFFF1A] hover:dark:text-white",
       },
@@ -16,8 +32,9 @@ const menuItemBaseStyles = cva(
     defaultVariants: {
       isActive: false,
     },
-  },
+  }
 );
+
 
 export function MenuItem(
   props: {

@@ -43,7 +43,7 @@ export function UserInfo() {
             width={200}
             height={200}
           />
-          <figcaption className="flex items-center gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only">
+          <figcaption className="flex items-center gap-1 font-medium text-white dark:text-dark-6 max-[1024px]:sr-only">
             <span>{USER.name}</span>
 
             <ChevronUpIcon

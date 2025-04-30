@@ -25,27 +25,28 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="h-screen overflow-hidden">
+      <body>
         <Providers>
           <NextTopLoader color="#5750F1" showSpinner={false} />
 
-          <div className="flex h-full">
-            {/* Sidebar remains fixed */}
+          {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
+                {children}
+              </main> */}
+              {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden pt-4 pr-4 pl-4 md:pt-6 md:pr-6 md:pl-6 2xl:pt-10 2xl:pr-10 2xl:pl-10">
+                {children}
+              </main> */}
+              <div className="flex min-h-screen">
             <Sidebar />
-
-            {/* Content area with scrollable children */}
-            <div className="flex flex-col flex-1 bg-gray-2 dark:bg-[#020d1a]">
+ 
+            <div className="w-full bg-gray-2 dark:bg-[#020d1a]">
               <Header />
-
-              <main className="flex-1 overflow-y-auto isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+              <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
                 {children}
               </main>
             </div>
-          </div>
+            </div>
         </Providers>
       </body>
     </html>
   );
 }
-
-

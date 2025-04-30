@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Eye, MoreHorizontal, Trash } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Eye, MoreHorizontal, Pencil, Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
+// import { Eye, MoreHorizontal, Pencil } from "lucide-react"
 
 // Sample employee data
 const employees = [
@@ -72,6 +73,14 @@ const employees = [
 
 export default function EmployeesPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [monthValue, setMonthValue] = useState("");
+
+  useEffect(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // pad with 0
+    setMonthValue(`${year}-${month}`); // format: "YYYY-MM"
+  }, []);
 
   const filteredEmployees = employees.filter((employee) =>
     employee.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -83,6 +92,12 @@ export default function EmployeesPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 bg-white dark:bg-gray-800">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Manage Employees & Track</h2>
+        <input
+      type="month"
+      value={monthValue}
+      onChange={(e) => setMonthValue(e.target.value)}
+      className="rounded border-2 border-gray-300 dark:border-gray-500 p-2"
+    />
       </div>
       <div className="flex items-center justify-between">
         <div className="w-full max-w-sm">
@@ -97,12 +112,12 @@ export default function EmployeesPage() {
               <TableHead>Payment Status</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Time</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredEmployees.map((employee) => (
-              <TableRow key={employee.id}>
+              <TableRow key={employee.id} className={employee.status === "Paid" ? "bg-green-100 dark:bg-gray-800" : "bg-red-100 dark:bg-gray-800"}>
                 <TableCell className="font-medium">{employee.name}</TableCell>
                 <TableCell>
                   {/* <Badge variant={employee.status === "Paid" ? "default" : "destructive"}>{employee.status}</Badge> */}
@@ -134,7 +149,7 @@ export default function EmployeesPage() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu> */}
-                  <DropdownMenu>
+                  {/* <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <MoreHorizontal className="h-4 w-4" />
@@ -153,7 +168,12 @@ export default function EmployeesPage() {
                         Delete Employee
                       </DropdownMenuItem>
                     </DropdownMenuContent>
-                  </DropdownMenu>
+                  </DropdownMenu> */}
+
+<div className="px-6 py-4 whitespace-nowrap flex justify-center items-center gap-4">
+                    <div className="flex items-center text-blue-600 hover:text-blue-900 text-sm"><Eye className="mr-2 h-4 w-4" /> View</div>
+                    <div className="flex items-center text-gray-600 hover:text-gray-900 text-sm"> <Pencil className="mr-2 h-4 w-4" /><a href="/admin/add-employee" className="dark:text-white">Edit</a></div>
+                  </div>
 
                 </TableCell>
               </TableRow>
