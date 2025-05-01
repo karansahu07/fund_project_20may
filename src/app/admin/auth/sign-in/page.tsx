@@ -1,14 +1,55 @@
+"use client";
+
+import { EmailIcon, PasswordIcon } from "@/assets/icons";
 import Signin from "@/components/Auth/Signin";
+import SigninWithPassword from "@/components/Auth/SigninWithPassword";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { Checkbox } from "@/components/FormElements/checkbox";
+import InputGroup from "@/components/FormikFields/formikinputgroup";
+import { Form, Formik } from "formik";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import * as Yup from "yup";
+import { useState, useEffect } from "react"
+import useAuth from "../../../../hooks/useAuth";
+import {observer} from "mobx-react-lite"
+import { useRouter } from "next/navigation";
 
-export const metadata: Metadata = {
+
+const metadata: Metadata = {
   title: "Sign in",
 };
 
-export default function SignIn() {
+const validationSchema = Yup.object({
+  email: Yup.string().email("Invalid email").required("Required"),
+  password: Yup.string().min(6).required("Required"),
+});
+
+function SignIn() {
+
+  const [loading, setloading] = useState(false);
+  const store = useAuth();
+  const router = useRouter();
+
+  const handleSubmit=async(values)=>{
+    // console.log(values);
+    // setloading(true);
+    await store.login(values.email, values.password);
+    // setloading(false);
+  }
+
+  useEffect(() => {
+    if (!store.auth.isSubmitting) return;
+  
+    if (store.auth.error) {
+      alert(store.auth.error);
+    } else if (store.auth.isAuthenticated) {
+      alert(store.auth.message);
+      router.push("/admin/admin-dashboard");
+    }
+  }, [store.auth.isSubmitting]);
+
   return (
     <>
       {/* <Breadcrumb pageName="Sign In" /> */}
@@ -17,7 +58,84 @@ export default function SignIn() {
         <div className="flex flex-wrap items-center">
           <div className="w-full xl:w-1/2">
             <div className="w-full p-4 sm:p-12.5 xl:p-15">
-              <Signin />
+              <div className="my-6 text-center">
+                <h1 className="text-4xl font-bold text-black dark:text-white">
+                  Sign in with Email
+                </h1>
+              </div>
+
+              <div>
+                
+            <Formik
+                  initialValues={{email:"", password:"", remember:false}}
+                  validationSchema={validationSchema}
+                  onSubmit={handleSubmit}
+                >
+                  {({ setFieldValue, values, errors }) => (
+                    <Form>
+                      <InputGroup
+                        type="email"
+                        label="Email"
+                        className="mb-4 [&_input]:py-[15px]"
+                        placeholder="Enter your email"
+                        name="email"
+                        icon={<EmailIcon />}
+                      />
+            
+                      <InputGroup
+                        type="password"
+                        label="Password"
+                        className="mb-5 [&_input]:py-[15px]"
+                        placeholder="Enter your password"
+                        name="password"
+                        icon={<PasswordIcon />}
+                      />
+            
+                      <div className="mb-6 flex items-center justify-between gap-2 py-2 font-medium">
+                        <Checkbox
+                          label="Remember me"
+                          name="remember"
+                          withIcon="check"
+                          minimal
+                          radius="md"
+                          checked={values.remember}
+                          onChange={(e) => setFieldValue("remember", e.target.checked)}
+                        />
+            
+                        <Link
+                          href="/auth/forgot-password"
+                          className="hover:text-primary dark:text-white dark:hover:text-primary"
+                        >
+                          Forgot Password?
+                        </Link>
+                      </div>
+                     
+                      <div className="mb-4.5">
+                        <button
+                          type="submit"
+                          disabled = {store.auth.isSubmitting}
+                          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
+                        >
+                          Sign In
+                          {store.auth.isSubmitting && (
+                            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent dark:border-primary dark:border-t-transparent" />
+                          )}
+                        </button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
+
+              </div>
+
+              <div className="mt-6 text-center">
+                <p>
+                  Don’t have any account?{" "}
+                  <Link href="/" className="text-primary">
+                    Sign Up
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -48,8 +166,8 @@ export default function SignIn() {
               </h1>
 
               <p className="w-full max-w-[375px] font-medium text-dark-4 dark:text-dark-6">
-              Please sign in to your account by completing the necessary
-              fields in left
+                Please sign in to your account by completing the necessary
+                fields in left
               </p>
 
               <div className="mt-31">
@@ -68,3 +186,5 @@ export default function SignIn() {
     </>
   );
 }
+
+export default observer(SignIn);
