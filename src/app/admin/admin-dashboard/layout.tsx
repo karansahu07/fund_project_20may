@@ -1,17 +1,16 @@
+// app/layout.tsx
 import "@/css/satoshi.css";
 import "@/css/style.css";
-
-
-import { Sidebar } from "@/components/Layouts/sidebar";
-
 import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 
+import { Sidebar } from "@/components/Layouts/sidebar";
 import { Header } from "@/components/Layouts/header";
-import type { Metadata } from "next";
-import NextTopLoader from "nextjs-toploader";
-import type { PropsWithChildren } from "react";
 import { Providers } from "../providers";
+import NextTopLoader from "nextjs-toploader";
+
+import type { Metadata } from "next";
+import type { PropsWithChildren } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -25,26 +24,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
           <NextTopLoader color="#5750F1" showSpinner={false} />
-
-          {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden p-4 md:p-6 2xl:p-10">
-                {children}
-              </main> */}
-              {/* <main className="isolate mx-auto w-full max-w-screen-2xl overflow-hidden pt-4 pr-4 pl-4 md:pt-6 md:pr-6 md:pl-6 2xl:pt-10 2xl:pr-10 2xl:pl-10">
-                {children}
-              </main> */}
-              <div className="flex min-h-screen">
+          <div className="flex min-h-screen">
+            {/* Sidebar should not depend on client-only features */}
             <Sidebar />
- 
-            <div className="w-full bg-gray-2 dark:bg-[#020d1a]">
+
+            <div className="flex-1 bg-gray-2 dark:bg-[#020d1a] flex flex-col">
               <Header />
-              <main className="isolate mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10 overflow-y-auto h-screen">
+              {/* Avoid using fixed heights like h-screen on scrollable areas in layouts */}
+              <main className="isolate mx-auto w-full max-w-screen-2xl flex-1 overflow-y-auto p-4 md:p-6 2xl:p-10">
                 {children}
               </main>
             </div>
-            </div>
+          </div>
         </Providers>
       </body>
     </html>

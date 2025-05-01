@@ -152,7 +152,10 @@ class AuthStore {
       runInAction(() => {
         this.auth.isAuthenticated = true;
         this.auth.user = { ...data };
+        // this.auth.isInitialized = true;
+        // console.log(response);
         this.auth.message = "Logged in successfully";
+        // console.log(data);
         this.auth.error = null;
       });
     } catch (error) {

@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!unProtectedRoutes.includes(pathname) && !authStore.auth.isAuthenticated) {
         router.replace("/");
       }
+
+      console.log(pathname);
     };
 
     initAuth();
