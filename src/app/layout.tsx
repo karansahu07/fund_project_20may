@@ -5,7 +5,7 @@ import NextTopLoader from "nextjs-toploader";
 import { PropsWithChildren } from "react";
 import { Providers } from "./providers";
 
-// import { Sidebar } from "@/components/Layouts/sidebar";
+// import Sidebar from "@/components/Layouts/sidebar";
 
 // import "flatpickr/dist/flatpickr.min.css";
 // import "jsvectormap/dist/jsvectormap.css";

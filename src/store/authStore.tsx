@@ -39,6 +39,7 @@ class AuthStore {
       login: action,
       logout: action,
       initialize: action,
+      setAuthError: action,
       auth: observable,
       getRole: computed,
       getUser: computed,
@@ -110,7 +111,7 @@ class AuthStore {
           console.log(parsedData);
           if (parsedData?.auth?.isAuthenticated && parsedData.auth.user?.email) {
             runInAction(() => {
-              this.auth = parsedData.auth;
+              this.auth = {...parsedData.auth};
               this.auth.message = "Session restored from storage.";
             });
           } else {
@@ -147,20 +148,18 @@ class AuthStore {
 
     try {
       const response = await axios.post("/api/login", { email, password });
-      const { data } = response.data;
+      const { data } = response;
 
       runInAction(() => {
         this.auth.isAuthenticated = true;
-        this.auth.user = { ...data };
-        // this.auth.isInitialized = true;
-        // console.log(response);
+        this.auth.user = { ...data.user };
+        this.auth.isInitialized = true;
         this.auth.message = "Logged in successfully";
-        // console.log(data);
         this.auth.error = null;
       });
     } catch (error) {
       runInAction(() => {
-        this.auth.error = error.response?.data?.msg || "Login failed.";
+        this.auth.error = error.response?.data?.message || "Login failed.";
       });
     } finally {
       runInAction(() => {
@@ -184,6 +183,12 @@ class AuthStore {
         this.auth.error = "Logout Failed.";
       });
     }
+  }
+
+  setAuthError(err: any){
+    runInAction(() => {
+      this.auth.error = err;
+    });
   }
 
   get getRole() {

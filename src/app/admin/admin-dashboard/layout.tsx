@@ -4,7 +4,7 @@ import "@/css/style.css";
 import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 
-import { Sidebar } from "@/components/Layouts/sidebar";
+import Sidebar from "@/components/Layouts/sidebar";
 import { Header } from "@/components/Layouts/header";
 import { Providers } from "../providers";
 import NextTopLoader from "nextjs-toploader";

@@ -9,8 +9,13 @@ import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
+import useAuth from "@/hooks/useAuth";
+import { getFilteredNavData } from "@/lib/nav-utils";
+import { observer } from "mobx-react-lite";
 
-export function Sidebar() {
+function Sidebar() {
+  const auth = useAuth();
+  const FilteredNavItems = getFilteredNavData(auth.getRole);
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -26,7 +31,7 @@ export function Sidebar() {
 
   useEffect(() => {
     // Keep collapsible open, when it's subpage is active
-    NAV_DATA.some((section) => {
+    FilteredNavItems.some((section) => {
       return section.items.some((item) => {
         return item.items.some((subItem) => {
           if (subItem.url === pathname) {
@@ -87,7 +92,7 @@ export function Sidebar() {
 
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
-            {NAV_DATA.map((section) => (
+            {FilteredNavItems.map((section) => (
               <div key={section.label} className="mb-6">
                 <h2 className="mb-5 text-sm font-medium text-white dark:text-dark-6">
                   {section.label}
@@ -178,3 +183,5 @@ export function Sidebar() {
     </>
   );
 }
+
+export default observer(Sidebar);

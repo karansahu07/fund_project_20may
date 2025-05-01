@@ -11,28 +11,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
   const unProtectedRoutes = ["/", "/employees/auth/sign-in", "/admin/auth/sign-in"];
-  const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
     const initAuth = async () => {
-      await authStore.initialize();
-      setHasInitialized(true);
+      if (!authStore.auth.isInitialized) {
+        await authStore.initialize();
+      }
 
       if (unProtectedRoutes.includes(pathname)) {
-        authStore.auth.error = null;
+        authStore.setAuthError(null);
       }
 
       if (!unProtectedRoutes.includes(pathname) && !authStore.auth.isAuthenticated) {
         router.replace("/");
       }
 
-      console.log(pathname);
     };
 
     initAuth();
-  }, [pathname, authStore, router]);
+  }, [pathname, authStore.auth.isInitialized, authStore.auth.isAuthenticated, authStore.auth.isSubmitting, router]);
 
-  if (!hasInitialized || !authStore.auth.isInitialized) {
+  if (!authStore.auth.isInitialized) {
     return <h1>Loading...</h1>;
   }
 
