@@ -62,7 +62,7 @@ export const NAV_DATA: NavSectionType[] = [
       },
       {
         title: "My Profile",
-        url: "/adnin/profile",
+        url: "/admin/profile",
         auth: ["Admin"],
         icon: AiOutlineProfile,
         items: [],
