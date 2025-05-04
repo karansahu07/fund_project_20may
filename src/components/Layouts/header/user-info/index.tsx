@@ -12,10 +12,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation"; // <-- Add this import
 import { useState } from "react";
 import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
+import useAuth from "@/hooks/useAuth";
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter(); // <-- Use the router
+  const authStore = useAuth();
 
   const USER = {
     name: "John Smith",
@@ -25,7 +27,7 @@ export function UserInfo() {
 
   const handleLogout = () => {
     setIsOpen(false);
-    // Perform logout logic here (e.g. clearing auth, etc.)
+    authStore.logout();
     router.push("/"); // <-- Redirect to login page
   };
 

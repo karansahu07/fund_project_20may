@@ -34,7 +34,7 @@ export const NAV_DATA: NavSectionType[] = [
       // Admin specific menu items
       {
         title: "Dashboard",
-        url: "/admin/admin-dashboard",
+        url: "/admin/dashboard",
         auth: ["Admin"],
         icon: MdOutlineSpaceDashboard,
         items: [],
@@ -78,7 +78,7 @@ export const NAV_DATA: NavSectionType[] = [
       // },
       {
         title: "Dashboard",
-        url: "/employees/employee-dashboard",
+        url: "/employees/dashboard",
         auth: ["Employee"],
         icon: MdOutlineSpaceDashboard,
         items: [],

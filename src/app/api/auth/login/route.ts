@@ -8,7 +8,7 @@ export async function POST(req: Request) {
      // Get referer URL
      const referer = req.headers.get("referer") || "";
 
-     const role = referer.includes("/admin/auth/sign-in")? "Admin":"Employee";
+     const role = referer.includes("/sign-in/admin")? "Admin":"Employee";
 
     const db = await connectToDatabase();
 

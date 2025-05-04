@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const authStore = useMemo(() => new AuthStore(), []);
   const pathname = usePathname();
   const router = useRouter();
-  const unProtectedRoutes = ["/", "/employees/auth/sign-in", "/admin/auth/sign-in"];
+  const unProtectedRoutes = ["/", "/sign-in/employee", "/sign-in/admin"];
 
   useEffect(() => {
     const initAuth = async () => {
@@ -22,7 +22,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         authStore.setAuthError(null);
       }
 
+      // console.log("unprotected routes", !unProtectedRoutes.includes(pathname));
+      // console.log("is authentivated", !authStore.auth.isAuthenticated);
       if (!unProtectedRoutes.includes(pathname) && !authStore.auth.isAuthenticated) {
+        // console.log("router replace becoz of auth", !unProtectedRoutes.includes(pathname) && !authStore.auth.isAuthenticated);
         router.replace("/");
       }
 

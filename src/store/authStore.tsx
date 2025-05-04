@@ -24,8 +24,17 @@ const initialUser = {
   avatar: "",
 };
 
+type Auth = {
+  user: typeof initialUser,
+  isInitialized: boolean,
+  isAuthenticated: boolean,
+  isSubmitting: boolean,
+  error: null | string,
+  message: null | string,
+}
+
 class AuthStore {
-  auth = {
+  auth : Auth = {
     user: { ...initialUser },
     isInitialized: false,
     isAuthenticated: false,
@@ -72,7 +81,7 @@ class AuthStore {
 
   saveToLocalStorage() {
     try {
-      const encryptedData = this.encryptData({ auth: this.auth });
+      const encryptedData = this.encryptData({ auth: {...this.auth, error:"", message : ""} });
       localStorage.setItem("user", encryptedData);
     } catch (error) {
       console.error("Error saving to localStorage:", error);
@@ -100,6 +109,8 @@ class AuthStore {
     runInAction(() => {
       this.auth.isSubmitting = true;
       this.auth.isAuthenticated = false;
+      this.auth.error = null;
+      this.auth.message = null;
     });
   
     try {
@@ -141,9 +152,11 @@ class AuthStore {
   }
   
 
-  async login(email, password) {
+  async login(email: any, password: any) {
     runInAction(() => {
       this.auth.isSubmitting = true;
+      this.auth.error = null;
+      this.auth.message = null;
     });
 
     try {
@@ -170,13 +183,16 @@ class AuthStore {
 
   async logout() {
     try {
-      await axios.get("/api/logout"); // Adjusted to Next.js route
+      await axios.get("/api/auth/logout"); // Adjusted to Next.js route
       runInAction(() => {
         this.auth.isAuthenticated = false;
         this.auth.user = { ...initialUser };
         this.auth.message = "Logged Out Successfully";
         this.auth.error = null;
       });
+      if (typeof window !== "undefined"){
+        localStorage.removeItem("user");
+      }
     } catch (error) {
       console.error("Logout failed:", error);
       runInAction(() => {
