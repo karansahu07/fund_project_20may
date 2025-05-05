@@ -1,15 +1,15 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+// import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"; // Uncomment if you want to use it.
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -30,7 +30,7 @@ const formSchema = z.object({
   dateOfBirth: z.string().min(1, {
     message: "Date of birth is required.",
   }),
-})
+});
 
 export default function AddEmployeePage() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,31 +43,62 @@ export default function AddEmployeePage() {
       dateOfJoining: "",
       dateOfBirth: "",
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      title: "Employee added successfully",
-      description: `Added ${values.firstName} ${values.lastName} to the system.`,
-    })
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("/api/add-employee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phone: values.phone,
+          email: values.email,
+          dateOfJoining: values.dateOfJoining,
+          dateOfBirth: values.dateOfBirth,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Employee added successfully",
+          description: `Added ${values.firstName} ${values.lastName} to the system. Password: ${data.password}`,
+        });
+        form.reset();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Something went wrong while adding the employee.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add employee. Please try again.",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
-    
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Add Employee</h2>
         {/* <Breadcrumb pageName="Add Employee" /> */}
       </div>
       <Card className="dark:bg-[#020d1a]">
-       
         <CardHeader>
           <CardTitle>Employee Information</CardTitle>
           <CardDescription>Enter the details of the new employee to add them to the system.</CardDescription>
         </CardHeader>
-       
+
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -155,13 +186,14 @@ export default function AddEmployeePage() {
                   )}
                 />
               </div>
-             <div > <Button type="submit" className="text-white mr-4">Add Employee</Button>
-             <Button type="submit" className="text-white">Update Employee</Button>
-             </div>
+              <div>
+                <Button type="submit" className="text-white mr-4">Add Employee</Button>
+                <Button type="submit" className="text-white" disabled>Update Employee</Button>
+              </div>
             </form>
           </Form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

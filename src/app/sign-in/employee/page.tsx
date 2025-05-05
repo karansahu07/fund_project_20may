@@ -49,8 +49,6 @@ function SignIn() {
   }
 
   useEffect(() => {
-    // if (!store.auth.isSubmitting) return;
-
     if (store.auth.error) {
       toast.error(store.auth.error);
     } else if (store.auth.isAuthenticated) {

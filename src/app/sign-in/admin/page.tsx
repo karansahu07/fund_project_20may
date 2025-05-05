@@ -9,20 +9,17 @@ import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 
 import { EmailIcon, PasswordIcon } from "@/assets/icons";
-import Signin from "@/components/Auth/Signin";
-import SigninWithPassword from "@/components/Auth/SigninWithPassword";
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { Checkbox } from "@/components/FormElements/checkbox";
 import InputGroup from "@/components/FormikFields/formikinputgroup";
 import { Form, Formik } from "formik";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import * as Yup from "yup";
 import { useState, useEffect } from "react"
 import useAuth from "../../../hooks/useAuth";
 import { observer } from "mobx-react-lite"
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { Checkbox } from "@/components/FormElements/checkbox";
 
 
 const metadata: Metadata = {
@@ -51,9 +48,9 @@ function SignIn() {
     // if (!store.auth.isSubmitting) return;
 
     if (store.auth.error) {
-      alert(store.auth.error);
+      toast.error(store.auth.error);
     } else if (store.auth.isAuthenticated) {
-      alert(store.auth.message);
+      toast.success(store.auth.message);
       router.push("/admin/dashboard");
     }
   }, [store.auth.isSubmitting]);
@@ -87,7 +84,7 @@ function SignIn() {
             />
 
             <div className="mb-6 flex items-center justify-between gap-2 py-2 font-medium">
-              {/* <Checkbox
+                 {/* <Checkbox
                           label="Remember me"
                           name="remember"
                           withIcon="check"

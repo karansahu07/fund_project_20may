@@ -42,6 +42,8 @@ class AuthStore {
     error: null,
     message: null,
   };
+  isAuthenticated: any;
+  user: any;
 
   constructor() {
     makeObservable(this, {
@@ -65,11 +67,11 @@ class AuthStore {
     }
   }
 
-  encryptData(data) {
+  encryptData(data: { auth: { error: string; message: string; user: typeof initialUser; isInitialized: boolean; isAuthenticated: boolean; isSubmitting: boolean; }; }) {
     return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
   }
 
-  decryptData(cipherText) {
+  decryptData(cipherText: string | CryptoJS.lib.CipherParams) {
     try {
       const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
       return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
@@ -183,7 +185,7 @@ class AuthStore {
 
   async logout() {
     try {
-      await axios.get("/api/auth/logout"); // Adjusted to Next.js route
+      await axios.get("/api/auth/logout");
       runInAction(() => {
         this.auth.isAuthenticated = false;
         this.auth.user = { ...initialUser };
