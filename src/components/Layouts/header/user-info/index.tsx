@@ -19,6 +19,8 @@ export function UserInfo() {
   const router = useRouter(); // <-- Use the router
   const authStore = useAuth();
 
+  const { username, useremail } = authStore.getUser;  
+
   const USER = {
     name: "John Smith",
     email: "johnson@nextadmin.com",
@@ -28,7 +30,7 @@ export function UserInfo() {
   const handleLogout = () => {
     setIsOpen(false);
     authStore.logout();
-    router.push("/"); // <-- Redirect to login page
+    router.push("/"); 
   };
 
   return (
@@ -46,7 +48,7 @@ export function UserInfo() {
             height={200}
           />
           <figcaption className="flex items-center gap-1 font-medium text-white dark:text-dark-6 max-[1024px]:sr-only">
-            <span>{USER.name}</span>
+            <span>{username}</span>
 
             <ChevronUpIcon
               aria-hidden
@@ -78,10 +80,10 @@ export function UserInfo() {
 
           <figcaption className="space-y-1 text-base font-medium">
             <div className="mb-2 leading-none text-dark dark:text-white">
-              {USER.name}
+              {username}
             </div>
 
-            <div className="leading-none text-gray-6">{USER.email}</div>
+            <div className="leading-none text-gray-6">{useremail}</div>
           </figcaption>
         </figure>
 

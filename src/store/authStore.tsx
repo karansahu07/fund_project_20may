@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import {
@@ -10,12 +10,12 @@ import {
   observable,
   runInAction,
 } from "mobx";
-
+ 
 axios.defaults.baseURL = "/";
 axios.defaults.withCredentials = true;
-
+ 
 const SECRET_KEY = "your-secret-key";
-
+ 
 const initialUser = {
   role: "",
   username: "",
@@ -23,7 +23,7 @@ const initialUser = {
   homeRoute: "/",
   avatar: "",
 };
-
+ 
 type Auth = {
   user: typeof initialUser,
   isInitialized: boolean,
@@ -32,9 +32,9 @@ type Auth = {
   error: null | string,
   message: null | string,
 }
-
+ 
 class AuthStore {
-  auth : Auth = {
+  auth: Auth = {
     user: { ...initialUser },
     isInitialized: false,
     isAuthenticated: false,
@@ -42,9 +42,7 @@ class AuthStore {
     error: null,
     message: null,
   };
-  isAuthenticated: any;
-  user: any;
-
+ 
   constructor() {
     makeObservable(this, {
       login: action,
@@ -55,10 +53,10 @@ class AuthStore {
       getRole: computed,
       getUser: computed,
     });
-
+ 
     if (typeof window !== "undefined") {
       this.loadFromLocalStorage();
-
+ 
       autorun(() => {
         if (this.auth.isInitialized) {
           this.saveToLocalStorage();
@@ -66,11 +64,11 @@ class AuthStore {
       });
     }
   }
-
-  encryptData(data: { auth: { error: string; message: string; user: typeof initialUser; isInitialized: boolean; isAuthenticated: boolean; isSubmitting: boolean; }; }) {
+ 
+  encryptData(data: any) {
     return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
   }
-
+ 
   decryptData(cipherText: string | CryptoJS.lib.CipherParams) {
     try {
       const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
@@ -80,16 +78,16 @@ class AuthStore {
       return null;
     }
   }
-
+ 
   saveToLocalStorage() {
     try {
-      const encryptedData = this.encryptData({ auth: {...this.auth, error:"", message : ""} });
+      const encryptedData = this.encryptData({ auth: { ...this.auth, error: "", message: "" } });
       localStorage.setItem("user", encryptedData);
     } catch (error) {
       console.error("Error saving to localStorage:", error);
     }
   }
-
+ 
   loadFromLocalStorage() {
     try {
       const encryptedData = localStorage.getItem("user");
@@ -106,7 +104,7 @@ class AuthStore {
       console.error("Error loading from localStorage:", error);
     }
   }
-
+ 
   async initialize() {
     runInAction(() => {
       this.auth.isSubmitting = true;
@@ -114,17 +112,22 @@ class AuthStore {
       this.auth.error = null;
       this.auth.message = null;
     });
-  
+ 
     try {
-      // Load from localStorage if on client
       if (typeof window !== "undefined") {
         const encryptedData = localStorage.getItem("user");
         if (encryptedData) {
           const parsedData = this.decryptData(encryptedData);
-          console.log(parsedData);
           if (parsedData?.auth?.isAuthenticated && parsedData.auth.user?.email) {
             runInAction(() => {
-              this.auth = {...parsedData.auth};
+              this.auth = {
+                ...parsedData.auth,
+                user: {
+                  ...initialUser,
+                  ...parsedData.auth.user,
+                  username: parsedData.auth.user.username || parsedData.auth.user.email?.split("@")[0] || "",
+                },
+              };
               this.auth.message = "Session restored from storage.";
             });
           } else {
@@ -149,30 +152,36 @@ class AuthStore {
         this.auth.isSubmitting = false;
       });
     }
-    console.log("Initializing...", typeof window, {...this.auth});
-
+ 
+    console.log("Initializing...", typeof window, { ...this.auth });
   }
-  
-
+ 
   async login(email: any, password: any) {
     runInAction(() => {
       this.auth.isSubmitting = true;
       this.auth.error = null;
       this.auth.message = null;
     });
-
+ 
     try {
       const response = await axios.post("/api/auth/login", { email, password });
       const { data } = response;
-
+ 
+      console.log("From server", data.user);
+ 
       runInAction(() => {
         this.auth.isAuthenticated = true;
-        this.auth.user = { ...data.user };
+        this.auth.user = {
+          ...initialUser,
+          ...data.user,
+          username: data.user.username || data.user.email?.split("@")[0] || "",
+          useremail: data.user.email || "",
+        };
         this.auth.isInitialized = true;
         this.auth.message = "Logged in successfully";
         this.auth.error = null;
       });
-    } catch (error) {
+    } catch (error: any) {
       runInAction(() => {
         this.auth.error = error.response?.data?.message || "Login failed.";
       });
@@ -182,7 +191,7 @@ class AuthStore {
       });
     }
   }
-
+ 
   async logout() {
     try {
       await axios.get("/api/auth/logout");
@@ -192,7 +201,7 @@ class AuthStore {
         this.auth.message = "Logged Out Successfully";
         this.auth.error = null;
       });
-      if (typeof window !== "undefined"){
+      if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
     } catch (error) {
@@ -202,20 +211,20 @@ class AuthStore {
       });
     }
   }
-
-  setAuthError(err: any){
+ 
+  setAuthError(err: any) {
     runInAction(() => {
       this.auth.error = err;
     });
   }
-
+ 
   get getRole() {
     return this.auth.user.role || "guest";
   }
-
+ 
   get getUser() {
     return this.auth.user;
   }
 }
-
+ 
 export default AuthStore;

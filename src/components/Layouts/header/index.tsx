@@ -8,9 +8,14 @@ import { MenuIcon } from "./icons";
 import { Notification } from "./notification";
 import { ThemeToggleSwitch } from "./theme-toggle";
 import { UserInfo } from "./user-info";
+import useAuth from "@/hooks/useAuth";
 
 export function Header() {
   const { toggleSidebar, isMobile } = useSidebarContext();
+
+  const authStore = useAuth();
+
+  const { username } = authStore.getUser;  
 
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-stroke bg-[#1e88e5] px-4 py-5 shadow-1 dark:border-stroke-dark dark:bg-gray-dark md:px-5 2xl:px-10">
@@ -36,7 +41,7 @@ export function Header() {
 
       <div className="max-xl:hidden">
         <h1 className="mb-0.5 text-heading-5 font-bold text-white dark:text-white">
-          Admin Dashboard
+          Welcome, {username}
         </h1>
       </div>
 
