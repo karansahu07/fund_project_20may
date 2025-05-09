@@ -31,39 +31,38 @@ export const NAV_DATA: NavSectionType[] = [
   {
     label: "MAIN MENU",
     items: [
-      // Admin specific menu items
       {
         title: "Dashboard",
         url: "/admin/dashboard",
-        auth: ["Admin"],
+        auth: ["admin"],
         icon: MdOutlineSpaceDashboard,
         items: [],
       },
       {
         title: "Manage Employees",
         url: "/admin/manage-employees",
-        auth: ["Admin"],
+        auth: ["admin"],
         icon: MdOutlineManageAccounts,
         items: [],
       },
       {
         title: "Add Employee",
         url: "/admin/add-employee",
-        auth: ["Admin"],
+        auth: ["admin"],
         icon: IoPersonAddOutline,
         items: [],
       },
       {
         title: "All Transactions",
         url: "/admin/transactions",
-        auth: ["Admin"],
+        auth: ["admin"],
         icon: ArrowLeftRight,
         items: [],
       },
       {
         title: "My Profile",
         url: "/admin/profile",
-        auth: ["Admin"],
+        auth: ["admin"],
         icon: AiOutlineProfile,
         items: [],
       },
@@ -79,21 +78,21 @@ export const NAV_DATA: NavSectionType[] = [
       {
         title: "Dashboard",
         url: "/employees/dashboard",
-        auth: ["Employee"],
+        auth: ["employee"],
         icon: MdOutlineSpaceDashboard,
         items: [],
       },
       {
         title: "My Profile",
         url: "/employees/profile",
-        auth: ["Employee"],
+        auth: ["employee"],
         icon: AiOutlineProfile,
         items: [],
       },
       {
         title: "Payment",
         url: "/employees/payment",
-        auth: ["Employee"],
+        auth: ["employee"],
         icon: LuIndianRupee,
         items: [],
       }

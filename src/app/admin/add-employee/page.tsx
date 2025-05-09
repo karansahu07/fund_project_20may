@@ -27,7 +27,7 @@ const formSchema = z.object({
   dateOfJoining: z.string().min(1, {
     message: "Date of joining is required.",
   }),
-  dateOfBirth: z.string().min(1, {
+  dob: z.string().min(1, {
     message: "Date of birth is required.",
   }),
 });
@@ -41,26 +41,43 @@ export default function AddEmployeePage() {
       phone: "",
       email: "",
       dateOfJoining: "",
-      dateOfBirth: "",
+      dob: "",
     },
   });
 
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   try {
+  //     const response = await fetch("/api/employees", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         firstName: values.firstName,
+  //         lastName: values.lastName,
+  //         phone: values.phone,
+  //         email: values.email,
+  //         dateOfJoining: values.dateOfJoining,
+  //         dateOfBirth: values.dateOfBirth,
+  //       }),
+  //     });
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("/api/add-employee", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: values.firstName,
-          lastName: values.lastName,
-          phone: values.phone,
-          email: values.email,
-          dateOfJoining: values.dateOfJoining,
-          dateOfBirth: values.dateOfBirth,
-        }),
-      });
+    const response = await fetch("/api/employees", {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+    firstName: values.firstName,
+    lastName: values.lastName,
+    phone: values.phone,
+    email: values.email,
+    dateOfJoining: values.dateOfJoining,
+    dob: values.dob, // Make sure it matches what backend expects
+    }),
+    });
 
       const data = await response.json();
 
@@ -174,7 +191,7 @@ export default function AddEmployeePage() {
                 />
                 <FormField
                   control={form.control}
-                  name="dateOfBirth"
+                  name="dob"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Date of Birth</FormLabel>
