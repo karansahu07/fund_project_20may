@@ -3,14 +3,28 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"; // Uncomment if you want to use it.
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
+// Zod schema with phone number validation (exactly 10 digits)
 const formSchema = z.object({
   firstName: z.string().min(2, {
     message: "First name must be at least 2 characters.",
@@ -18,9 +32,11 @@ const formSchema = z.object({
   lastName: z.string().min(2, {
     message: "Last name must be at least 2 characters.",
   }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits.",
-  }),
+  phone: z
+    .string()
+    .min(10, { message: "Phone number must be 10 digits." })
+    .max(10, { message: "Phone number must be 10 digits." })
+    .regex(/^[0-9]+$/, { message: "Phone number must contain only digits." }),
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
@@ -45,62 +61,27 @@ export default function AddEmployeePage() {
     },
   });
 
-  // async function onSubmit(values: z.infer<typeof formSchema>) {
-  //   try {
-  //     const response = await fetch("/api/employees", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         firstName: values.firstName,
-  //         lastName: values.lastName,
-  //         phone: values.phone,
-  //         email: values.email,
-  //         dateOfJoining: values.dateOfJoining,
-  //         dateOfBirth: values.dateOfBirth,
-  //       }),
-  //     });
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-    const response = await fetch("/api/employees", {
-    method: "POST",
-    headers: {
-    "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-    firstName: values.firstName,
-    lastName: values.lastName,
-    phone: values.phone,
-    email: values.email,
-    dateOfJoining: values.dateOfJoining,
-    dob: values.dob, // Make sure it matches what backend expects
-    }),
-    });
+      const response = await fetch("/api/employees", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        toast({
-          title: "Employee added successfully",
-          description: `Added ${values.firstName} ${values.lastName} to the system. Password: ${data.password}`,
-        });
+        toast.success(`Employee ${values.firstName} ${values.lastName} added. Password: ${data.password}`);
         form.reset();
       } else {
-        toast({
-          title: "Error",
-          description: data.message || "Something went wrong while adding the employee.",
-          variant: "destructive",
-        });
+        toast.error(data.message || "Something went wrong while adding the employee.");
       }
     } catch (error) {
       console.error("Error adding employee:", error);
-      toast({
-        title: "Error",
-        description: "Failed to add employee. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to add employee. Please try again.");
     }
   }
 
@@ -108,12 +89,13 @@ export default function AddEmployeePage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Add Employee</h2>
-        {/* <Breadcrumb pageName="Add Employee" /> */}
       </div>
       <Card className="dark:bg-[#020d1a]">
         <CardHeader>
           <CardTitle>Employee Information</CardTitle>
-          <CardDescription>Enter the details of the new employee to add them to the system.</CardDescription>
+          <CardDescription>
+            Enter the details of the new employee to add them to the system.
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -147,6 +129,7 @@ export default function AddEmployeePage() {
                   )}
                 />
               </div>
+
               <div className="grid gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -175,6 +158,7 @@ export default function AddEmployeePage() {
                   )}
                 />
               </div>
+
               <div className="grid gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -203,9 +187,11 @@ export default function AddEmployeePage() {
                   )}
                 />
               </div>
+
               <div>
-                <Button type="submit" className="text-white mr-4">Add Employee</Button>
-                <Button type="submit" className="text-white" disabled>Update Employee</Button>
+                <Button type="submit" className="text-white mr-4">
+                  Add Employee
+                </Button>
               </div>
             </form>
           </Form>

@@ -179,6 +179,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { toast } from "@/components/ui/use-toast";
+import { ModalForm } from "@/components/ModalForm";
+import { ConfigDrivenTable } from "@/components/ConfigDrivenTable";
+import { title } from "process";
 
 interface Employee {
   _id: string;
@@ -195,6 +198,7 @@ export default function EmployeesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+  const [openForm, setopenForm] = useState(false);
 
   useEffect(() => {
     const today = new Date();
@@ -209,6 +213,7 @@ export default function EmployeesPage() {
       const response = await fetch("/api/employees?page=1&limit=50");
       const result = await response.json();
       if (response.ok) {
+        console.log(result.data)
         setEmployees(result.data);
       } else {
         toast({ title: "Failed to fetch employees", variant: "destructive" });
@@ -220,6 +225,34 @@ export default function EmployeesPage() {
       setLoading(false);
     }
   };
+
+  const columns = [
+    {
+      title: "name",
+      dataIndex: "firstName",
+      render: (_: any, row: { firstName: any; lastName: any; }) => `${row.firstName} ${row.lastName}`
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      render: (status: any) => (
+  <Badge className={`text-white ${status ? 'bg-green-600' : 'bg-red-600'}`}>
+    {status ? 'ACTIVE' : 'INACTIVE'}
+  </Badge>
+)
+
+    },
+    {
+      title: "Actions",
+      dataIndex: "_id",
+      render: () => {
+        return <>
+          <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+          <Button variant="ghost" onClick={() => setopenForm(true)} size="sm"><Pencil className="h-4 w-4" /></Button>
+        </>
+      }
+    }
+  ]
 
   const filteredEmployees = employees
     .filter((e) =>
@@ -278,7 +311,7 @@ export default function EmployeesPage() {
         </div>
 
         <div className="rounded-md border">
-          <Table>
+          {/* <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -299,11 +332,11 @@ export default function EmployeesPage() {
                       <TableCell> <Badge className="bg-green-600 text-white">Paid</Badge></TableCell>
                       <TableCell>{formattedDate}</TableCell>
                       <TableCell>
-                      {e.email}
+                        {e.email}
                       </TableCell>
                       <TableCell className="text-center space-x-4">
                         <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm"><Pencil className="h-4 w-4" /><a href="/admin/add-employee" className="dark:text-white"></a></Button>
+                        <Button variant="ghost" onClick={() => setopenForm(true)} size="sm"><Pencil className="h-4 w-4" /></Button>
                       </TableCell>
                     </TableRow>
                   );
@@ -316,7 +349,33 @@ export default function EmployeesPage() {
                 </TableRow>
               )}
             </TableBody>
-          </Table>
+          </Table> */}
+
+          <ConfigDrivenTable columnStructure={columns} currentPage={0} totalDocs={0} totalPages={0} onPageChange={function (page: number): void {
+            throw new Error("Function not implemented.");
+          }} sourceData={employees} />
+
+          <ModalForm
+            open={openForm}
+            onOpenChange={setopenForm}
+            columns={2}
+            fields={[
+              { name: 'firstName', label: 'First name', type: 'text' },
+              { name: 'lastName', label: 'Last name', type: 'text' },
+              { name: 'phone', label: 'Phone', type: 'number' },
+              { name: 'email', label: 'Email', type: 'text' },
+              { name: 'dateOfJoining', label: 'Date of Joining', type: 'date' },
+              { name: 'dob', label: 'Date of Birth', type: 'date' },
+              { name: 'dateOfResigning', label: 'Date of Resigning', type: 'date' },
+              { name: 'status', label: 'Status', type: 'radio', options: [{ label: 'Inactive', value: 'inactive' }, { label: 'active', value: 'active' }], radioProps: { variant: 'row' } },
+            ]}
+            onSubmit={function (values: Record<string, any>): void {
+              // throw new Error("Function not implemented.");
+              console.log(values);
+            }}
+            onReset={() => setopenForm(false)}
+          />
+
         </div>
       </div>
     </div>
