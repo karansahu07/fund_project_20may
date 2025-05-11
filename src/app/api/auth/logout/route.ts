@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-// import { connectToDatabase } from "@/lib/db";
 
 export async function GET(req: Request) {
   try {
