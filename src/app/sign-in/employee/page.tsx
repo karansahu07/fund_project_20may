@@ -9,8 +9,6 @@ import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 
 import { EmailIcon, PasswordIcon } from "@/assets/icons";
-import Signin from "@/components/Auth/Signin";
-import SigninWithPassword from "@/components/Auth/SigninWithPassword";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { Checkbox } from "@/components/FormElements/checkbox";
 import InputGroup from "@/components/FormikFields/formikinputgroup";
@@ -55,7 +53,7 @@ function SignIn() {
        toast.success(store.auth.message);
       router.push("/employees/dashboard");
     }
-  }, [store.auth.isSubmitting]);
+  }, [store.auth.isSubmitting,router,store.auth.error,store.auth.isAuthenticated,store.auth.message]);
 
   return (
     <>

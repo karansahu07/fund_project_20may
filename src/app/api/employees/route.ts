@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
       phone,
       dob,
       dateOfJoining,
+      dateOfResigning,
     } = body;
 
     if (!email || !firstName || !lastName || !phone || !dob || !dateOfJoining) {
@@ -85,6 +86,7 @@ export async function POST(req: NextRequest) {
       phone,
       dob,
       dateOfJoining,
+      dateOfResigning,
       password: hashedPassword,
       role: 'employee',
       isActive: true
@@ -146,9 +148,9 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { _id, updatedBy, ...updateFields } = body;
+    const { _id, ...updateFields } = body;
 
-    if (!_id || !updatedBy) {
+    if (!_id) {
       return Response.json(new ApiResponse(false, 'Missing _id or updatedBy', {}), { status: 400 });
     }
 
@@ -156,7 +158,7 @@ export async function PUT(req: NextRequest) {
 
     const updatedUser = await User.findByIdAndUpdate(
       _id,
-      { ...updateFields, updatedBy },
+      { ...updateFields },
       { new: true }
     ).lean();
 

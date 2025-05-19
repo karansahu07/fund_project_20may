@@ -172,7 +172,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Pencil, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -182,14 +182,26 @@ import { toast } from "@/components/ui/use-toast";
 import { ModalForm } from "@/components/ModalForm";
 import { ConfigDrivenTable } from "@/components/ConfigDrivenTable";
 import { title } from "process";
+import { Values } from "../dashboard/_components/overview-cards/icons";
 
 interface Employee {
-  _id: string;
+  _id?: string;
   firstName: string;
   lastName: string;
+  phone: string;
   email: string;
+  isActive : boolean;
   status: string;
-  createdAt: string;
+  createdAt?: string;
+}
+
+const initialValues: Employee = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  status: "active",
+  isActive: false
 }
 
 export default function EmployeesPage() {
@@ -199,6 +211,8 @@ export default function EmployeesPage() {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [openForm, setopenForm] = useState(false);
+  const [editKey, setEditKey] = useState(null);
+  const [editValues, setEditValues] = useState<any>(null);
 
   useEffect(() => {
     const today = new Date();
@@ -206,6 +220,18 @@ export default function EmployeesPage() {
     setSelectedYear(String(today.getFullYear()));
     fetchEmployees();
   }, []);
+
+  useEffect(() => {
+    if (!editKey) {
+      setEditValues(null);
+      setopenForm(false);
+      return;
+    }
+    const employee = employees.find(e => e._id == editKey);
+    setEditValues(() => ({ ...employee, status : employee?.isActive ? "active" : "inactive" }));
+    setopenForm(true);
+  }, [editKey,employees]);
+
 
   const fetchEmployees = async () => {
     setLoading(true);
@@ -226,6 +252,46 @@ export default function EmployeesPage() {
     }
   };
 
+  const handleEdit = (id: null) => {
+    setEditKey((p) => {
+      if (p == id) {
+        return null;
+      } else {
+        return id;
+      }
+    })
+  }
+
+  const updateEmployee = async (values: Record<string, any>) => {
+    const body = {...values, isActive: values.status=="active" ? true : false}
+  try {
+    const response = await fetch('/api/employees', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      toast({ title: "Employee updated successfully" });
+      fetchEmployees(); 
+      setopenForm(false); 
+      setEditKey(null); 
+    } else {
+      const error = await response.json();
+      toast({ title: "Update failed", description: error.message || "Something went wrong", variant: "destructive" });
+    }
+  } catch (error) {
+    toast({ title: "Error", description: "Failed to update employee", variant: "destructive" });
+    console.error(error);
+  }
+};
+
+
+
+  const addEmployee = ()=>{};
+
   const columns = [
     {
       title: "name",
@@ -233,22 +299,26 @@ export default function EmployeesPage() {
       render: (_: any, row: { firstName: any; lastName: any; }) => `${row.firstName} ${row.lastName}`
     },
     {
+      title: "dob",
+      dataIndex: "dob",
+    },
+    {
       title: "Status",
       dataIndex: "isActive",
       render: (status: any) => (
-  <Badge className={`text-white ${status ? 'bg-green-600' : 'bg-red-600'}`}>
-    {status ? 'ACTIVE' : 'INACTIVE'}
-  </Badge>
-)
+        <Badge className={`text-white ${status ? 'bg-green-600' : 'bg-red-600'}`}>
+          {status ? 'ACTIVE' : 'INACTIVE'}
+        </Badge>
+      )
 
     },
     {
       title: "Actions",
       dataIndex: "_id",
-      render: () => {
+      render: (id: any) => {
         return <>
           <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-          <Button variant="ghost" onClick={() => setopenForm(true)} size="sm"><Pencil className="h-4 w-4" /></Button>
+          <Button variant="ghost" onClick={() => handleEdit(id)} size="sm"><Pencil className="h-4 w-4" /></Button>
         </>
       }
     }
@@ -259,7 +329,7 @@ export default function EmployeesPage() {
       `${e.firstName} ${e.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((e) => {
-      const date = new Date(e.createdAt);
+      const date = new Date(e?.createdAt as string);
       const m = String(date.getMonth() + 1).padStart(2, "0");
       const y = String(date.getFullYear());
       return (
@@ -268,7 +338,7 @@ export default function EmployeesPage() {
       );
     });
 
-  const uniqueYears = [...new Set(employees.map((e) => new Date(e.createdAt).getFullYear().toString()))];
+  const uniqueYears = [...new Set(employees.map((e) => new Date(e?.createdAt as string).getFullYear().toString()))];
   const months = [
     { value: "01", label: "January" },
     { value: "02", label: "February" },
@@ -351,13 +421,15 @@ export default function EmployeesPage() {
             </TableBody>
           </Table> */}
 
-          <ConfigDrivenTable columnStructure={columns} currentPage={0} totalDocs={0} totalPages={0} onPageChange={function (page: number): void {
+          <ConfigDrivenTable columnStructure={columns} currentPage={0} totalDocs={0} totalPages={0} onPageChange={function (_page: number): void {
             throw new Error("Function not implemented.");
           }} sourceData={employees} />
 
           <ModalForm
             open={openForm}
             onOpenChange={setopenForm}
+            title={editKey ? "editemployee" : "Add Employee"}
+            initialValues={editValues ? editValues : initialValues}
             columns={2}
             fields={[
               { name: 'firstName', label: 'First name', type: 'text' },
@@ -369,12 +441,8 @@ export default function EmployeesPage() {
               { name: 'dateOfResigning', label: 'Date of Resigning', type: 'date' },
               { name: 'status', label: 'Status', type: 'radio', options: [{ label: 'Inactive', value: 'inactive' }, { label: 'active', value: 'active' }], radioProps: { variant: 'row' } },
             ]}
-            onSubmit={function (values: Record<string, any>): void {
-              // throw new Error("Function not implemented.");
-              console.log(values);
-            }}
-            onReset={() => setopenForm(false)}
-          />
+
+            onReset={() => setopenForm(false)} onSubmit={updateEmployee}          />
 
         </div>
       </div>

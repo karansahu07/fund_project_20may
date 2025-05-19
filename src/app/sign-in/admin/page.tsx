@@ -41,6 +41,7 @@ function SignIn() {
     // console.log(values);
     // setloading(true);
     await store.login(values.email, values.password);
+    // router.push("/admin/dashboard");
     // setloading(false);
   }
 
@@ -53,7 +54,7 @@ function SignIn() {
       toast.success(store.auth.message);
       router.push("/admin/dashboard");
     }
-  }, [store.auth.isSubmitting]);
+  }, [store.auth.isSubmitting,router,store.auth.error,store.auth.isAuthenticated,store.auth.message]);
 
   return (
     <>

@@ -10,6 +10,7 @@ import {
   observable,
   runInAction,
 } from "mobx";
+import { useRouter } from "next/navigation";
  
 axios.defaults.baseURL = "/";
 axios.defaults.withCredentials = true;
@@ -19,6 +20,7 @@ const SECRET_KEY = "your-secret-key";
 const initialUser = {
   role: "",
   username: "",
+  useremail:"",
   email: "",
   homeRoute: "/",
   avatar: "",
@@ -157,6 +159,7 @@ class AuthStore {
   }
  
   async login(email: any, password: any) {
+    // const router = useRouter();
     runInAction(() => {
       this.auth.isSubmitting = true;
       this.auth.error = null;
@@ -180,6 +183,7 @@ class AuthStore {
         this.auth.isInitialized = true;
         this.auth.message = "Logged in successfully";
         this.auth.error = null;
+        // router.push("/admin/dashboard");
       });
     } catch (error: any) {
       runInAction(() => {

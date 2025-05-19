@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password: string;
   phone: string;
   dateOfJoining: Date;
+  dateOfResigning: Date;
   dob: Date;
   role: 'admin' | 'employee';
   isActive: boolean;
@@ -46,6 +47,10 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     dateOfJoining: {
       type: Date,
       required: [true, 'Date of joining is required'],
+    },
+    dateOfResigning: {
+      type: Date,
+      default : null
     },
     dob: {
       type: Date,

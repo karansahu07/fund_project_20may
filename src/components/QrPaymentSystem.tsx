@@ -10,13 +10,15 @@ export default function QrPaymentSystem() {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   
-  const handleOtpChange = (index, value) => {
+  const  handleOtpChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // Only allow numbers
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`).focus();
+      // document.getElementById(`otp-${index + 1}`).focus();
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+    nextInput?.focus(); 
     }
   };
 
@@ -24,7 +26,7 @@ export default function QrPaymentSystem() {
     // Logic to send OTP via WhatsApp
     alert(`OTP sent to ${phone}`);
   };
-
+ 
   const handleVerifyPayment = () => {
     // Logic to verify the payment
     alert(`Verifying OTP: ${otp.join('')}`);

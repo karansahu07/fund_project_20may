@@ -10,10 +10,17 @@ const transactions = [
   { name: "Chirag", pid: "7548878787", date: "2025-05-01", time: "03:45 PM", srnshoot: "image" },
 ];
 
+type Txn = {
+  name: string;
+  pid: string;
+  date: string;
+  time: string;
+  srnshoot: string;
+};
 export default function LastTransactionPage() {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  const [filteredTxns, setFilteredTxns] = useState([]);
+  const [filteredTxns, setFilteredTxns] = useState<Txn[]>([]);
 
   useEffect(() => {
     const today = new Date();

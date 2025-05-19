@@ -46,7 +46,7 @@ function Sidebar() {
         });
       });
     });
-  }, [pathname]);
+  }, [pathname,FilteredNavItems,expandedItems]);
 
   return (
     <>

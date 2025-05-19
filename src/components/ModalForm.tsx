@@ -170,11 +170,10 @@ const FileUploadField = ({ field, values, setFieldValue }: any) => {
     <div className="w-full">
       {/* File Drop Area */}
       <div
-        className={`relative rounded-md border-2 border-dashed p-6 ${
-          dragActive
+        className={`relative rounded-md border-2 border-dashed p-6 ${dragActive
             ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
             : "border-gray-300 dark:border-gray-600"
-        } flex cursor-pointer flex-col items-center justify-center transition-colors`}
+          } flex cursor-pointer flex-col items-center justify-center transition-colors`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -311,6 +310,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as React from "react";
 import * as Yup from "yup";
 import { useState } from "react";
+import { date } from "zod";
 
 type FieldConfig = {
   name: string;
@@ -394,7 +394,7 @@ export function ModalForm({
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg bg-white shadow-2xl dark:bg-gray-800">
+      <div className="relative flex max-h-[70vh] w-full max-w-2xl flex-col rounded-lg bg-white shadow-2xl dark:bg-gray-800">
         {/* Header */}
         <div className="border-b border-gray-200 p-6 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -420,13 +420,12 @@ export function ModalForm({
                 {fields.map((field) => (
                   <div
                     key={field.name}
-                    className={`flex flex-col space-y-1 ${
-                      field.colSpan === 2
+                    className={`flex flex-col space-y-1 ${field.colSpan === 2
                         ? "col-span-1 md:col-span-2"
                         : field.colSpan === 3
                           ? "col-span-1 md:col-span-3"
                           : "col-span-1"
-                    }`}
+                      }`}
                   >
                     {field.type !== "checkbox" && (
                       <label
@@ -447,7 +446,7 @@ export function ModalForm({
                     )}
                     {field.type === "number" && (
                       <Field
-                      type = "number"
+                        type="number"
                         id={field.name}
                         name={field.name}
                         placeholder={field.placeholder}
@@ -475,6 +474,11 @@ export function ModalForm({
                     {field.type === "date" && (
                       <Field
                         type="date"
+                        value={
+                          values[field.name]
+                            ? new Date(values[field.name]).toISOString().split("T")[0]
+                            : ""
+                        }
                         id={field.name}
                         name={field.name}
                         className="rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -483,11 +487,10 @@ export function ModalForm({
 
                     {field.type === "radio" && field.options && (
                       <div
-                        className={`flex ${
-                          field.radioProps?.variant === "row"
+                        className={`flex ${field.radioProps?.variant === "row"
                             ? "flex-row space-x-4"
                             : "flex-col space-y-2"
-                        }`}
+                          }`}
                       >
                         {field.options.map((option) => (
                           <div

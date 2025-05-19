@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     initAuth();
-  }, [pathname, authStore.auth.isInitialized, authStore.auth.isAuthenticated, authStore.auth.isSubmitting, router]);
+  }, [pathname, authStore.auth.isInitialized, authStore.auth.isAuthenticated, authStore.auth.isSubmitting, router,authStore,unProtectedRoutes]);
 
   if (!authStore.auth.isInitialized) {
     return <h1>Loading...</h1>;

@@ -9,14 +9,14 @@ import {
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // <-- Add this import
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
 import useAuth from "@/hooks/useAuth";
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter(); // <-- Use the router
+  const router = useRouter();
   const authStore = useAuth();
 
   const { username, useremail } = authStore.getUser;  

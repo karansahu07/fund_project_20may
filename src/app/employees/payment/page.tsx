@@ -103,15 +103,74 @@
 //   )
 // }
 
-import Qrpage from "../../../components/QrPaymentSystem";
+// import Qrpage from "../../../components/QrPaymentSystem";
  
  
-export default function page(){
-  return(
-     <>
-     <div className="mt-1">
-      <Qrpage/>
-     </div>
-    </>
+// export default function page(){
+//   return(
+//      <>
+//      <div className="mt-1">
+//       <Qrpage/>
+//      </div>
+//     </>
+//   );
+// }
+
+
+'use client';
+
+import { useState } from 'react';
+import { QRCode } from 'react-qrcode-logo';
+
+export default function EmployeePaymentPage() {
+  const [utr, setUtr] = useState('');
+  const [status, setStatus] = useState('');
+
+  const handleSubmit = async () => {
+    if (!utr) return alert('Please enter UTR/Reference ID');
+
+    const res = await fetch('/api/payments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        utr,
+        name: 'karan',
+        amount: 100
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      setStatus('✅ Payment submitted successfully!');
+      setUtr('');
+    } else {
+      setStatus('❌ Failed to submit payment');
+    }
+  };
+
+  const upiLink = `upi://pay?pa=karandevsahu-1@oksbi&pn=karan&am=1&cu=INR`;
+
+  return (
+    <div className="p-6 max-w-md mx-auto text-center">
+      <h2 className="text-2xl font-semibold mb-4">Scan to Pay via Google Pay</h2>
+      <QRCode value={upiLink} size={200} />
+      <p className="mt-2 text-lg">Pay ₹1 to karan</p>
+
+      <input
+        className="mt-4 w-full border p-2 rounded"
+        placeholder="Enter UPI Reference ID (UTR)"
+        value={utr}
+        onChange={(e) => setUtr(e.target.value)}
+      />
+
+      <button
+        onClick={handleSubmit}
+        className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+      >
+        Submit Payment
+      </button>
+
+      {status && <p className="mt-3">{status}</p>}
+    </div>
   );
 }

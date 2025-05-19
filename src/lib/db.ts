@@ -12,30 +12,80 @@
 // }
 
 
+// import mongoose from 'mongoose';
+
+// const MONGODB_URI = process.env.MONGODB_URI;
+
+// if (!MONGODB_URI) {
+//   throw new Error('Please define the MONGODB_URI environment variable');
+// }
+
+// let cached = globalThis.mongoose || { conn: null, promise: null };
+// let cached = globalThis.mongoose;
+// if (!cached) {
+//   cached = globalThis.mongoose = { conn: null, promise: null };
+// }
+// async function dbConnect() {
+//   if (cached.conn) return cached.conn;
+
+//   if (!cached.promise) {
+//     cached.promise = mongoose.connect(MONGODB_URI, {
+//       bufferCommands: false,
+//     }).then(mongoose => {
+//       return mongoose;
+//     });
+//   }
+
+//   cached.conn = await cached.promise;
+//   globalThis.mongoose = cached;
+//   return cached.conn;
+// }
+
+// export default dbConnect;
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable');
 }
 
-let cached = global.mongoose || { conn: null, promise: null };
+// Extend NodeJS globalThis with a typed mongoose cache
+declare global {
+  var _mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  } | undefined;
+}
 
-async function dbConnect() {
-  if (cached.conn) return cached.conn;
+// Ensure mongoose cache is on globalThis
+const globalWithMongoose = globalThis as typeof globalThis & {
+  _mongoose?: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  };
+};
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+if (!globalWithMongoose._mongoose) {
+  globalWithMongoose._mongoose = {
+    conn: null,
+    promise: null,
+  };
+}
+
+const cache = globalWithMongoose._mongoose;
+
+async function dbConnect(): Promise<typeof mongoose> {
+  if (cache.conn) return cache.conn;
+
+  if (!cache.promise) {
+    cache.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    }).then(mongoose => {
-      return mongoose;
     });
   }
 
-  cached.conn = await cached.promise;
-  global.mongoose = cached;
-  return cached.conn;
+  cache.conn = await cache.promise;
+  return cache.conn;
 }
 
 export default dbConnect;
