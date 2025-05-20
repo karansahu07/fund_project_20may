@@ -18,14 +18,14 @@ function Layout({ children }:{children:React.ReactNode}) {
                             {children}
                         </div>
 
-                        <div className="mt-6 text-center">
+                        {/* <div className="mt-6 text-center">
                             <p>
                                 Don’t have any account?{" "}
                                 <Link href="/" className="text-primary">
                                     Sign Up
                                 </Link>
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

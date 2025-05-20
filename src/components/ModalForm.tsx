@@ -319,12 +319,13 @@ type FieldConfig = {
   placeholder?: string;
   validation?: any;
   options?: { label: string; value: string }[];
+  disabled?: boolean;
   colSpan?: 1 | 2 | 3;
   fileProps?: {
     variant: "single" | "multi";
     accept?: string;
     maxFiles?: number;
-    maxSize?: number; // in bytes
+    maxSize?: number; 
   };
   radioProps?: {
     variant: "row" | "column";
@@ -343,6 +344,7 @@ type ModalFormProps = {
   validationSchema?: Yup.Schema | null;
   loading?: boolean;
   onReset?: () => void;
+  disabled?: boolean;
 };
 
 export function ModalForm({

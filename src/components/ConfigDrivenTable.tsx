@@ -7,7 +7,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { Pagination } from "@/components/Pagination"; // adjust the path based on your project
+import { Pagination } from "@/components/Pagination";
 
 type ColumnType<T> = {
   title: string;
