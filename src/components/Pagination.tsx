@@ -46,7 +46,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
-      <div className="text-gray-600">
+      <div className="text-white-600">
         Showing page <span className="font-medium">{currentPage}</span> of{" "}
         <span className="font-medium">{totalPages}</span> — {totalItems} items
       </div>
@@ -69,7 +69,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-1 rounded border text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+          className="px-3 py-1 rounded border text-white-700 hover:text-black-700 disabled:opacity-50"
         >
           Prev
         </button>
@@ -83,10 +83,10 @@ export const Pagination: React.FC<PaginationProps> = ({
             <button
               key={idx}
               onClick={() => onPageChange(page as number)}
-              className={`px-3 py-1 rounded border ${
+              className={`px-3 py-1 rounded text-white border ${
                 page === currentPage
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-gray-100 text-gray-700"
+                  ? "bg-blue-500"
+                  : "text-gray-700"
               }`}
             >
               {page}
@@ -97,7 +97,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded border text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+          className="px-3 py-1 rounded border text-white-700 disabled:opacity-50"
         >
           Next
         </button>

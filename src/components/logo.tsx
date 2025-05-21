@@ -17,7 +17,7 @@ export function Logo() {
       <Image
         src={darkLogo}
         fill
-        className="hidden dark:block"
+        className="dark:block"
         alt="Ekarigar logo"
         role="presentation"
         quality={100}

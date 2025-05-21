@@ -15,7 +15,7 @@ export function Header() {
 
   const authStore = useAuth();
 
-  const { username } = authStore.getUser;  
+  const { username } = authStore.getUser;
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between border-b border-stroke bg-[#1e88e5] px-4 py-5 shadow-1 dark:border-stroke-dark dark:bg-gray-dark md:px-5 2xl:px-10">
@@ -30,11 +30,19 @@ export function Header() {
       {isMobile && (
         <Link href={"/"} className="ml-2 max-[430px]:hidden min-[375px]:ml-4">
           <Image
-            src={"/images/logo/logo-icon.svg"}
-            width={32}  
+            className="dark:hidden items-center"
+            src={"/images/logo/ekarigar_logo_dark_mode.svg"}
+            width={130}
             height={32}
-            alt=""
+            alt="logo"
             role="presentation"
+          />
+          <Image
+            className="hidden dark:block "
+            src={"/images/logo/ekarigar_logo_dark_mode.svg"}
+            alt="Logo"
+            width={130}
+            height={32}
           />
         </Link>
       )}

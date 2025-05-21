@@ -153,7 +153,9 @@ export default function EmployeePaymentPage() {
   return (
     <div className="p-6 max-w-md mx-auto text-center">
       <h2 className="text-2xl font-semibold mb-4">Scan to Pay via Google Pay</h2>
+      <div className="flex justify-center">
       <QRCode value={upiLink} size={200} />
+    </div>
       <p className="mt-2 text-lg">Pay ₹1 to karan</p>
 
       <input
