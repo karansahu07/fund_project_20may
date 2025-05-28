@@ -177,9 +177,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "react-toastify"
 import { ModalForm } from "@/components/ModalForm";
 import { ConfigDrivenTable } from "@/components/ConfigDrivenTable";
+import { FieldConfig } from "formik";
+import * as Yup from "yup"
 
 interface Employee {
   _id?: string;
@@ -201,38 +203,29 @@ const initialValues: Employee = {
   isActive: false,
 };
 
+const validationSchema = Yup.object({
+  phone: Yup.string().min(10, "Phone must be 10 digits long").max(10, "Phone must be 10 digits long")
+})
+
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  const [openForm, setopenForm] = useState(false);
-  const [editKey, setEditKey] = useState<string | null>(null);
-  const [editValues, setEditValues] = useState<any>(null);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [viewValues, setViewValues] = useState<Employee | null>(null);
+  const [openForm, setopenForm] = useState<any>(null);
+  const [editValues, setEditValues] = useState<any>(initialValues);
+  const [updating, setUpdating] = useState<boolean>(false)
 
   useEffect(() => {
     const today = new Date();
     setSelectedMonth(String(today.getMonth() + 1).padStart(2, "0"));
     setSelectedYear(String(today.getFullYear()));
-    fetchEmployees();
   }, []);
 
   useEffect(() => {
-    if (!editKey) {
-      setEditValues(null);
-      setopenForm(false);
-      return;
-    }
-    const employee = employees.find((e) => e._id === editKey);
-    setEditValues(() => ({
-      ...employee,
-      status: employee?.isActive ? "active" : "inactive",
-    }));
-    setopenForm(true);
-  }, [editKey, employees]);
+    fetchEmployees();
+  }, [updating])
 
   const fetchEmployees = async () => {
     setLoading(true);
@@ -240,39 +233,31 @@ export default function EmployeesPage() {
       const response = await fetch("/api/employees?page=1&limit=50");
       const result = await response.json();
       if (response.ok) {
-        setEmployees(result.data);
+        setEmployees(() => [...result.data]);
       } else {
-        toast({ title: "Failed to fetch employees", variant: "destructive" });
+        toast.error("Failed to load emploees!")
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast({
-        title: "Error",
-        description: "Something went wrong",
-        variant: "destructive",
-      });
+      toast.error(`Error occured: ${err.message}`)
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (id: string | null) => {
-    setEditKey((p) => (p === id ? null : id));
+  const handleEdit = (row: Employee) => {
+    setEditValues({ ...row, status: row?.isActive ? "active" : "inactive", });
+    setopenForm("edit");
+  };
+  const handleView = (row: Employee) => {
+    setEditValues({ ...row, status: row?.isActive ? "active" : "inactive", });
+    setopenForm("view");
   };
 
-  const handleView = (id: string) => {
-    const employee = employees.find((e) => e._id === id);
-    if (employee) {
-      setViewValues({
-        ...employee,
-        status: employee.isActive ? "active" : "inactive",
-      });
-      setViewOpen(true);
-    }
-  };
 
 
   const updateEmployee = async (values: Record<string, any>) => {
+    setUpdating(true)
     const body = { ...values, isActive: values.status === "active" };
     try {
       const response = await fetch("/api/employees", {
@@ -284,25 +269,18 @@ export default function EmployeesPage() {
       });
 
       if (response.ok) {
-        toast({ title: "Employee updated successfully" });
-        fetchEmployees();
+        toast.success("Employee updated successfully");
         setopenForm(false);
-        setEditKey(null);
+        setEditValues(initialValues);
       } else {
         const error = await response.json();
-        toast({
-          title: "Update failed",
-          description: error.message || "Something went wrong",
-          variant: "destructive",
-        });
+        toast.error(error.message || "Something went wrong");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update employee",
-        variant: "destructive",
-      });
+      toast.error("Failed to update employee");
       console.error(error);
+    } finally {
+      setUpdating(false)
     }
   };
 
@@ -331,12 +309,12 @@ export default function EmployeesPage() {
     {
       title: "Actions",
       dataIndex: "_id",
-      render: (id: any) => (
+      render: (id: any, row: Employee) => (
         <>
-          <Button variant="ghost" size="sm" onClick={() => handleView(id)}>
+          <Button variant="ghost" size="sm" onClick={() => handleView(row)}>
             <Eye className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" onClick={() => handleEdit(id)} size="sm">
+          <Button variant="ghost" onClick={() => handleEdit(row)} size="sm">
             <Pencil className="h-4 w-4" />
           </Button>
         </>
@@ -344,6 +322,27 @@ export default function EmployeesPage() {
     }
 
   ];
+
+  const fields = [
+    { name: "firstName", label: "First name", type: "text", },
+    { name: "lastName", label: "Last name", type: "text" },
+    { name: "phone", label: "Phone", type: "number", disabled: true },
+    { name: "email", label: "Email", type: "text" },
+    { name: "dateOfJoining", label: "Date of Joining", type: "date" },
+    { name: "dob", label: "Date of Birth", type: "date" },
+    { name: "dateOfResigning", label: "Date of Resigning", type: "date" },
+    {
+      name: "status",
+      label: "Status",
+      type: "radio",
+      options: [
+        { label: "Inactive", value: "inactive" },
+        { label: "active", value: "active" },
+      ],
+      radioProps: { variant: "row" },
+    },
+  ]
+
 
   const filteredEmployees = employees
     .filter((e) =>
@@ -437,62 +436,19 @@ export default function EmployeesPage() {
           />
 
           <ModalForm
-            open={openForm}
-            onOpenChange={setopenForm}
-            title={editKey ? "Edit Employee" : "Add Employee"}
-            initialValues={editValues ? editValues : initialValues}
+            validationSchema={validationSchema}
+            open={Boolean(openForm)}
+            onOpenChange={() => {
+              setEditValues(initialValues)
+              setopenForm(null)
+            }}
+            title={openForm == "edit" ? "Edit Employee" : "view"}
+            initialValues={editValues}
             columns={2}
-            fields={[
-              { name: "firstName", label: "First name", type: "text" },
-              { name: "lastName", label: "Last name", type: "text" },
-              { name: "phone", label: "Phone", type: "number" },
-              { name: "email", label: "Email", type: "text" },
-              { name: "dateOfJoining", label: "Date of Joining", type: "date" },
-              { name: "dob", label: "Date of Birth", type: "date" },
-              { name: "dateOfResigning", label: "Date of Resigning", type: "date" },
-              {
-                name: "status",
-                label: "Status",
-                type: "radio",
-                options: [
-                  { label: "Inactive", value: "inactive" },
-                  { label: "active", value: "active" },
-                ],
-                radioProps: { variant: "row" },
-              },
-            ]}
+            loading={loading || updating}
+            fields={fields.map(f => (openForm == "edit" ? { ...f, disabled: false } : { ...f, disabled: true })) as unknown as FieldConfig[]}
             onReset={() => setopenForm(false)}
             onSubmit={updateEmployee}
-          />
-          <ModalForm
-            open={viewOpen}
-            onOpenChange={setViewOpen}
-            title="View Employee"
-            initialValues={viewValues || initialValues}
-            columns={2}
-            fields={[
-              { name: "firstName", label: "First name", type: "text", disabled: true },
-              { name: "lastName", label: "Last name", type: "text", disabled: true },
-              { name: "phone", label: "Phone", type: "number", disabled: true },
-              { name: "email", label: "Email", type: "text", disabled: true },
-              { name: "dateOfJoining", label: "Date of Joining", type: "date", disabled: true },
-              { name: "dob", label: "Date of Birth", type: "date", disabled: true },
-              { name: "dateOfResigning", label: "Date of Resigning", type: "date", disabled: true },
-              {
-                name: "status",
-                label: "Status",
-                type: "radio",
-                disabled: true, 
-                options: [
-                  { label: "Inactive", value: "inactive" },
-                  { label: "active", value: "active" },
-                ],
-                radioProps: { variant: "row" },
-              },
-            ]}
-
-            onReset={() => setViewOpen(false)}
-            onSubmit={() => { }}
           />
 
         </div>

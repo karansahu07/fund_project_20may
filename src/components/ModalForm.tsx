@@ -1,6 +1,6 @@
 "use client";
 
-const FileUploadField = ({ field, values, setFieldValue }: any) => {
+const FileUploadField = ({ field, values, setFieldValue, disabled }: any) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
 
@@ -312,7 +312,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { date } from "zod";
 
-type FieldConfig = {
+export type FieldConfig = {
   name: string;
   label: string;
   type: "text" | "checkbox" | "date" | "radio" | "select" | "file" | "number";
@@ -344,7 +344,6 @@ type ModalFormProps = {
   validationSchema?: Yup.Schema | null;
   loading?: boolean;
   onReset?: () => void;
-  disabled?: boolean;
 };
 
 export function ModalForm({
@@ -360,7 +359,7 @@ export function ModalForm({
   loading = false,
   onReset,
 }: ModalFormProps) {
-  const defaultInitialValues = fields.reduce(
+  const defaultInitialValues = fields?.reduce(
     (acc, field) => {
       if (field.type === "checkbox") acc[field.name] = false;
       else if (field.type === "date") acc[field.name] = null;
@@ -411,7 +410,7 @@ export function ModalForm({
         <div className="flex-1 overflow-y-auto p-6">
           <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema}
+            validationSchema={validations}
             onSubmit={onSubmit}
             enableReinitialize
           >
@@ -441,6 +440,7 @@ export function ModalForm({
                     {field.type === "text" && (
                       <Field
                         id={field.name}
+                        disabled={field.disabled}
                         name={field.name}
                         placeholder={field.placeholder}
                         className="rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -450,6 +450,7 @@ export function ModalForm({
                       <Field
                         type="number"
                         id={field.name}
+                        disabled={field.disabled}
                         name={field.name}
                         placeholder={field.placeholder}
                         className="rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -461,6 +462,7 @@ export function ModalForm({
                         <Field
                           type="checkbox"
                           id={field.name}
+                          disabled={field.disabled}
                           name={field.name}
                           className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                         />
@@ -476,6 +478,7 @@ export function ModalForm({
                     {field.type === "date" && (
                       <Field
                         type="date"
+                        disabled={field.disabled}
                         value={
                           values[field.name]
                             ? new Date(values[field.name]).toISOString().split("T")[0]
@@ -501,6 +504,7 @@ export function ModalForm({
                           >
                             <Field
                               type="radio"
+                              disabled={field.disabled}
                               id={`${field.name}-${option.value}`}
                               name={field.name}
                               value={option.value}
@@ -520,6 +524,7 @@ export function ModalForm({
                     {field.type === "select" && field.options && (
                       <Field
                         as="select"
+                        disabled={field.disabled}
                         id={field.name}
                         name={field.name}
                         className="rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -536,6 +541,7 @@ export function ModalForm({
                     {field.type === "file" && (
                       <FileUploadField
                         field={field}
+                        disabled={field.disabled}
                         values={values}
                         setFieldValue={setFieldValue}
                       />
@@ -562,7 +568,7 @@ export function ModalForm({
                       className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                       disabled={loading}
                     >
-                      Reset
+                      close
                     </button>
                   )}
                   <button
