@@ -203,9 +203,16 @@ const initialValues: Employee = {
   isActive: false,
 };
 
+// const validationSchema = Yup.object({
+//   phone: Yup.string().min(10, "Phone must be 10 digits long").max(10, "Phone must be 10 digits long")
+// })
+
 const validationSchema = Yup.object({
-  phone: Yup.string().min(10, "Phone must be 10 digits long").max(10, "Phone must be 10 digits long")
-})
+  phone: Yup.string()
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+    .required("Phone number is required"),
+});
+
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);

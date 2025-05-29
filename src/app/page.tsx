@@ -22,6 +22,7 @@
 import Link from 'next/link';
 import { ShieldCheck, UserCircle } from 'lucide-react';
 import Image from "next/image";
+import "@/css/global.css";
  
 export default function HomePage() {
   return (

@@ -20,6 +20,7 @@ export function UserInfo() {
   const authStore = useAuth();
 
   const { username, useremail } = authStore.getUser;  
+  const role = authStore.getRole;
 
   const USER = {
     name: "John Smith",
@@ -30,7 +31,7 @@ export function UserInfo() {
   const handleLogout = () => {
     setIsOpen(false);
     authStore.logout();
-    router.push("/"); 
+    router.push(role === "admin" ? "/sign-in/admin" : "/sign-in/employee");
   };
 
   return (

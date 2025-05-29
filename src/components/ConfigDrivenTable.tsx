@@ -54,7 +54,6 @@ export function ConfigDrivenTable<T extends { _id?: string | number }>({
     }
     setSortConfig({ key: dataIndex, direction });
 
-    // Optional: hook into your backend API or sort logic
   };
 
   return (

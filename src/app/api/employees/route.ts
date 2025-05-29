@@ -43,7 +43,7 @@
 // }
 
 
-// app/api/employees/route.ts
+
 import { NextRequest } from 'next/server';
 import dbConnect from '@/lib/db';
 import User from '@/models/user';
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
       isActive: true
     });
 
-    // await sendAccountEmail(email, plainPassword);
+    await sendAccountEmail(email, plainPassword);
 
     return Response.json(
       new ApiResponse(true, 'Employee created and email sent', { userId: newUser._id }),

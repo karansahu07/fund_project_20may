@@ -30,6 +30,8 @@ function Sidebar() {
     // );
   };
 
+  const role = auth.getRole;
+
   useEffect(() => {
     // Keep collapsible open, when it's subpage is active
     FilteredNavItems.some((section) => {
@@ -72,7 +74,7 @@ function Sidebar() {
         <div className="flex h-full flex-col py-10 pl-[25px] pr-[7px]">
           <div className="relative pr-4.5">
             <Link
-              href={"/"}
+              href={role === "admin" ? "/admin/dashboard" : "/employee/dashboard"}
               onClick={() => isMobile && toggleSidebar()}
               className="px-0 py-2.5 min-[850px]:py-0"
             >
