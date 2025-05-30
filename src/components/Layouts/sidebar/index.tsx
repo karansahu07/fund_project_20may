@@ -16,7 +16,7 @@ import { observer } from "mobx-react-lite";
 function Sidebar() {
   const auth = useAuth();
   const FilteredNavItems = getFilteredNavData(auth.getRole);
-  console.log(auth.getRole, "check");
+  // console.log(auth.getRole, "check");
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
