@@ -169,7 +169,7 @@
 
 
 
-"use client";
+ "use client";
 
 import { useEffect, useState } from "react";
 import { Eye, Pencil } from "lucide-react";
@@ -178,9 +178,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { toast } from "react-toastify"
-import { ModalForm } from "@/components/ModalForm";
+import { FieldConfig, ModalForm } from "@/components/ModalForm";
 import { ConfigDrivenTable } from "@/components/ConfigDrivenTable";
-import { FieldConfig } from "formik";
+// import { FieldConfig } from "formik";
 import * as Yup from "yup"
 
 interface Employee {
@@ -215,11 +215,17 @@ const validationSchema = Yup.object({
 
 
 export default function EmployeesPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalDocs, setTotalDocs] = useState(0);
+  const rowsPerPage = 50;
+
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+
   const [openForm, setopenForm] = useState<any>(null);
   const [editValues, setEditValues] = useState<any>(initialValues);
   const [updating, setUpdating] = useState<boolean>(false)
@@ -231,27 +237,34 @@ export default function EmployeesPage() {
   }, []);
 
   useEffect(() => {
-    fetchEmployees();
-  }, [updating])
+  fetchEmployees();
+}, [updating, currentPage]);
 
-  const fetchEmployees = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/employees?page=1&limit=50");
-      const result = await response.json();
-      if (response.ok) {
-        setEmployees(() => [...result.data]);
-      } else {
-        toast.error("Failed to load emploees!")
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(`Error occured: ${err.message}`)
-    } finally {
-      setLoading(false);
+useEffect(() => {
+  setCurrentPage(1);
+}, [searchTerm, selectedMonth, selectedYear]);
+
+
+const fetchEmployees = async (page = currentPage, limit = rowsPerPage) => {
+  setLoading(true);
+  try {
+    const response = await fetch(`/api/employees?page=${page}&limit=${limit}`);
+    const result = await response.json();
+    if (response.ok) {
+      setEmployees(() => [...result.data]);
+      setTotalPages(Math.ceil(result.pagination.totalRecords / limit));
+      setTotalDocs(result.pagination.totalRecords || 0);
+      setCurrentPage(result.pagination.currentPage || page);
+    } else {
+      toast.error("Failed to load employees!");
     }
-  };
-
+  } catch (err: any) {
+    console.error(err);
+    toast.error(`Error occurred: ${err.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleEdit = (row: Employee) => {
     setEditValues({ ...row, status: row?.isActive ? "active" : "inactive", });
     setopenForm("edit");
@@ -350,43 +363,67 @@ export default function EmployeesPage() {
     },
   ]
 
+// 1. Filter employees by search term (prioritize startsWith match)
+const search = searchTerm.toLowerCase();
 
-  const filteredEmployees = employees
-    .filter((e) =>
-      `${e.firstName} ${e.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter((e) => {
-      if (!e.createdAt) return false;
-      const date = new Date(e.createdAt);
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const y = String(date.getFullYear());
-      return (
-        (!selectedMonth || m === selectedMonth) &&
-        (!selectedYear || y === selectedYear)
-      );
-    });
+const startsWithMatches = employees.filter((e) => {
+  const fullName = `${e.firstName} ${e.lastName}`.toLowerCase();
+  return fullName.startsWith(search);
+});
 
-  const uniqueYears = [
-    ...new Set(
-      employees
-        .map((e) => (e.createdAt ? new Date(e.createdAt).getFullYear().toString() : ""))
-        .filter((y) => y !== "")
-    ),
-  ];
-  const months = [
-    { value: "01", label: "January" },
-    { value: "02", label: "February" },
-    { value: "03", label: "March" },
-    { value: "04", label: "April" },
-    { value: "05", label: "May" },
-    { value: "06", label: "June" },
-    { value: "07", label: "July" },
-    { value: "08", label: "August" },
-    { value: "09", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
-  ];
+const containsMatches = employees.filter((e) => {
+  const fullName = `${e.firstName} ${e.lastName}`.toLowerCase();
+  return !fullName.startsWith(search) && fullName.includes(search);
+});
+
+const filteredBySearch = [...startsWithMatches, ...containsMatches];
+
+// 2. Further filter by selected month and year
+const filteredEmployees = filteredBySearch.filter((e) => {
+  if (!e.createdAt) return false;
+  const date = new Date(e.createdAt);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear());
+
+  const matchMonth = !selectedMonth || month === selectedMonth;
+  const matchYear = !selectedYear || year === selectedYear;
+
+  return matchMonth && matchYear;
+});
+
+// 3. Slice data for current page (pagination)
+const paginatedEmployees = filteredEmployees.slice(
+  (currentPage - 1) * rowsPerPage,
+  currentPage * rowsPerPage
+);
+
+// 4. Generate unique years from employees' createdAt
+const uniqueYears = Array.from(
+  new Set(
+    employees
+      .map((e) =>
+        e.createdAt ? new Date(e.createdAt).getFullYear().toString() : ""
+      )
+      .filter((y) => y !== "")
+  )
+);
+
+// 5. Month options for dropdown
+const months = [
+  { value: "01", label: "January" },
+  { value: "02", label: "February" },
+  { value: "03", label: "March" },
+  { value: "04", label: "April" },
+  { value: "05", label: "May" },
+  { value: "06", label: "June" },
+  { value: "07", label: "July" },
+  { value: "08", label: "August" },
+  { value: "09", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
+];
+
 
   return (
     <div className="flex-1 space-y-4">
@@ -431,16 +468,16 @@ export default function EmployeesPage() {
         </div>
 
         <div className="rounded-md border">
-          <ConfigDrivenTable
-            columnStructure={columns}
-            currentPage={0}
-            totalDocs={0}
-            totalPages={0}
-            onPageChange={function (_page: number): void {
-              throw new Error("Function not implemented.");
-            }}
-            sourceData={filteredEmployees}
-          />
+<ConfigDrivenTable
+  columnStructure={columns}
+  currentPage={currentPage}
+  totalDocs={filteredEmployees.length}
+  totalPages={Math.ceil(filteredEmployees.length / rowsPerPage)}
+  onPageChange={(page: number) => setCurrentPage(page)}
+  sourceData={paginatedEmployees} // ✅ sliced data for current page only
+/>
+
+
 
           <ModalForm
             validationSchema={validationSchema}
