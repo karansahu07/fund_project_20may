@@ -205,7 +205,7 @@ class AuthStore {
         // this.auth.user = { ...initialUser };
         this.auth.user = {
           ...initialUser,
-          role: this.auth.user.role  // ✅ preserve existing role
+          role: this.auth.user.role  //  preserve existing role
         };
         this.auth.message = "Logged Out Successfully";
         this.auth.error = null;
@@ -217,9 +217,8 @@ class AuthStore {
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
-    
-       // ✅ Redirect after logout
-    router.push("/admin/login"); // or wherever you want
+
+
 
     } catch (error) {
       console.error("Logout failed:", error);
