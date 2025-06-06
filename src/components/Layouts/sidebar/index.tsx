@@ -66,8 +66,8 @@ function Sidebar() {
           isMobile ? "fixed bottom-0 top-0 z-50" : "sticky top-0 h-screen",
           isOpen ? "w-full" : "w-0",
         )}
-        // aria-label="Main navigation"
-        // aria-hidden={!isOpen}
+        aria-label="Main navigation"
+        aria-hidden={!isOpen}
         inert={!isOpen}
       >
         <div className="flex h-full flex-col py-10 pl-[25px] pr-[7px]">
