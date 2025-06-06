@@ -22,6 +22,9 @@ export function UserInfo() {
   const { username, useremail } = authStore.getUser;  
   const role = authStore.getRole;
 
+  console.log("role",role);
+
+
   const USER = {
     name: "John Smith",
     email: "johnson@nextadmin.com",

@@ -1,7 +1,8 @@
 "use client";
- 
+
 import axios from "axios";
 import CryptoJS from "crypto-js";
+import { toJS } from "mobx";
 import {
   action,
   autorun,
@@ -11,21 +12,21 @@ import {
   runInAction,
 } from "mobx";
 import { useRouter } from "next/navigation";
- 
+
 axios.defaults.baseURL = "/";
 axios.defaults.withCredentials = true;
- 
+
 const SECRET_KEY = "your-secret-key";
- 
+
 const initialUser = {
   role: "",
   username: "",
-  useremail:"",
+  useremail: "",
   email: "",
   homeRoute: "/",
   avatar: "",
 };
- 
+
 type Auth = {
   user: typeof initialUser,
   isInitialized: boolean,
@@ -34,7 +35,7 @@ type Auth = {
   error: null | string,
   message: null | string,
 }
- 
+
 class AuthStore {
   auth: Auth = {
     user: { ...initialUser },
@@ -44,7 +45,7 @@ class AuthStore {
     error: null,
     message: null,
   };
- 
+
   constructor() {
     makeObservable(this, {
       login: action,
@@ -55,10 +56,10 @@ class AuthStore {
       getRole: computed,
       getUser: computed,
     });
- 
+
     if (typeof window !== "undefined") {
       this.loadFromLocalStorage();
- 
+
       autorun(() => {
         if (this.auth.isInitialized) {
           this.saveToLocalStorage();
@@ -66,11 +67,11 @@ class AuthStore {
       });
     }
   }
- 
+
   encryptData(data: any) {
     return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
   }
- 
+
   decryptData(cipherText: string | CryptoJS.lib.CipherParams) {
     try {
       const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
@@ -80,7 +81,7 @@ class AuthStore {
       return null;
     }
   }
- 
+
   saveToLocalStorage() {
     try {
       const encryptedData = this.encryptData({ auth: { ...this.auth, error: "", message: "" } });
@@ -89,7 +90,7 @@ class AuthStore {
       console.error("Error saving to localStorage:", error);
     }
   }
- 
+
   loadFromLocalStorage() {
     try {
       const encryptedData = localStorage.getItem("user");
@@ -106,7 +107,7 @@ class AuthStore {
       console.error("Error loading from localStorage:", error);
     }
   }
- 
+
   async initialize() {
     runInAction(() => {
       this.auth.isSubmitting = true;
@@ -114,7 +115,7 @@ class AuthStore {
       this.auth.error = null;
       this.auth.message = null;
     });
- 
+
     try {
       if (typeof window !== "undefined") {
         const encryptedData = localStorage.getItem("user");
@@ -154,10 +155,10 @@ class AuthStore {
         this.auth.isSubmitting = false;
       });
     }
- 
+
     console.log("Initializing...", typeof window, { ...this.auth });
   }
- 
+
   async login(email: any, password: any) {
     // const router = useRouter();
     runInAction(() => {
@@ -165,13 +166,13 @@ class AuthStore {
       this.auth.error = null;
       this.auth.message = null;
     });
- 
+
     try {
       const response = await axios.post("/api/auth/login", { email, password });
       const { data } = response;
- 
+
       console.log("From server", data.user);
- 
+
       runInAction(() => {
         this.auth.isAuthenticated = true;
         this.auth.user = {
@@ -195,15 +196,23 @@ class AuthStore {
       });
     }
   }
- 
+
   async logout() {
     try {
       await axios.get("/api/auth/logout");
       runInAction(() => {
         this.auth.isAuthenticated = false;
-        this.auth.user = { ...initialUser };
+        // this.auth.user = { ...initialUser };
+        this.auth.user = {
+          ...initialUser,
+          role: this.auth.user.role  // ✅ preserve existing role
+        };
         this.auth.message = "Logged Out Successfully";
         this.auth.error = null;
+
+        console.log("auth state after runInAction:", toJS(this.auth));
+
+        // console.log("gdfg",this.auth.user); 
       });
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
@@ -215,20 +224,20 @@ class AuthStore {
       });
     }
   }
- 
+
   setAuthError(err: any) {
     runInAction(() => {
       this.auth.error = err;
     });
   }
- 
+
   get getRole() {
     return this.auth.user.role || "guest";
   }
- 
+
   get getUser() {
     return this.auth.user;
   }
 }
- 
+
 export default AuthStore;
