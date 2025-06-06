@@ -217,6 +217,10 @@ class AuthStore {
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
+    
+       // ✅ Redirect after logout
+    router.push("/admin/login"); // or wherever you want
+
     } catch (error) {
       console.error("Logout failed:", error);
       runInAction(() => {
