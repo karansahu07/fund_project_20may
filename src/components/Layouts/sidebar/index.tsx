@@ -60,15 +60,14 @@ function Sidebar() {
           aria-hidden="true"
         />
       )}
-
       <aside
         className={cn(
           "max-w-[290px] overflow-hidden border-r border-gray-200 bg-[#1e88e5] transition-[width] duration-200 ease-linear dark:border-gray-800 dark:bg-gray-dark",
           isMobile ? "fixed bottom-0 top-0 z-50" : "sticky top-0 h-screen",
           isOpen ? "w-full" : "w-0",
         )}
-        aria-label="Main navigation"
-        aria-hidden={!isOpen}
+        // aria-label="Main navigation"
+        // aria-hidden={!isOpen}
         inert={!isOpen}
       >
         <div className="flex h-full flex-col py-10 pl-[25px] pr-[7px]">
