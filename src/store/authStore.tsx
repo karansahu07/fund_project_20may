@@ -19,7 +19,7 @@ axios.defaults.withCredentials = true;
 const SECRET_KEY = "your-secret-key";
 
 const initialUser = {
-  role: "",
+  role: "guest",
   username: "",
   useremail: "",
   email: "",
@@ -202,11 +202,11 @@ class AuthStore {
       await axios.get("/api/auth/logout");
       runInAction(() => {
         this.auth.isAuthenticated = false;
-        // this.auth.user = { ...initialUser };
-        this.auth.user = {
-          ...initialUser,
-          role: this.auth.user.role  //  preserve existing role
-        };
+         this.auth.user = { ...initialUser };
+        // this.auth.user = {
+        //   ...initialUser,
+        //   role: this.auth.user.role  //  preserve existing role
+        // };
         this.auth.message = "Logged Out Successfully";
         this.auth.error = null;
 
