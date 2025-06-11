@@ -33,9 +33,11 @@ export function UserInfo() {
 
   const handleLogout = () => {
     setIsOpen(false);
+     const userRole = role; // store current role BEFORE logout
     authStore.logout();
-    router.push(role === "admin" ? "/sign-in/admin" : "/sign-in/employee");
-  };
+   // Use the stored role for redirect
+  router.push(userRole === "admin" ? "/sign-in/admin" : "/sign-in/employee");
+};
 
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>
