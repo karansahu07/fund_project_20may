@@ -26,17 +26,12 @@ useEffect(() => {
     const isGuest = authStore.getRole === "guest";
     const isAuthenticated = authStore.auth.isAuthenticated;
 
-    if (isProtected && (!isAuthenticated || isGuest) && !authStore.logoutRedirecting) {
-  const role = authStore.lastRole;
-  if (role === "admin") {
-    router.replace("/admin/login");
-  } else if (role === "employee") {
-    router.replace("/employee/login");
-  } else {
-    router.replace("/"); // fallback
-  }
-}
-
+    // ⚠️ Only redirect to "/" if on a protected route AND not authenticated AND not already being redirected somewhere else
+    if (isProtected && (!isAuthenticated || isGuest)) {
+      if (pathname !== "/sign-in/employee" && pathname !== "/sign-in/admin") {
+        router.replace("/");
+      }
+    }
   };
 
   initAuth();
