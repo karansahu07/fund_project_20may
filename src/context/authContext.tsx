@@ -12,31 +12,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const unProtectedRoutes = ["/", "/sign-in/employee", "/sign-in/admin"];
 
-  useEffect(() => {
-    const initAuth = async () => {
-      if (!authStore.auth.isInitialized) {
-        await authStore.initialize();
-      }
+useEffect(() => {
+  const initAuth = async () => {
+    if (!authStore.auth.isInitialized) {
+      await authStore.initialize();
+    }
 
-      if (unProtectedRoutes.includes(pathname)) {
-        authStore.setAuthError(null);
-      }
+    if (unProtectedRoutes.includes(pathname)) {
+      authStore.setAuthError(null);
+    }
 
-      // console.log("unprotected routes", !unProtectedRoutes.includes(pathname));
-      // console.log("is authenticated", !authStore.auth.isAuthenticated);
-      if (!unProtectedRoutes.includes(pathname) && !authStore.auth.isAuthenticated || !unProtectedRoutes.includes(pathname) && authStore.getRole == 'guest') {
-        // console.log("router replace becoz of auth", !unProtectedRoutes.includes(pathname) && !authStore.auth.isAuthenticated);
+    const isProtected = !unProtectedRoutes.includes(pathname);
+    const isGuest = authStore.getRole === "guest";
+    const isAuthenticated = authStore.auth.isAuthenticated;
+
+    // ⚠️ Only redirect to "/" if on a protected route AND not authenticated AND not already being redirected somewhere else
+    if (isProtected && (!isAuthenticated || isGuest)) {
+      if (pathname !== "/sign-in/employee" && pathname !== "/sign-in/admin") {
         router.replace("/");
       }
+    }
+  };
 
-    };
+  initAuth();
+}, [
+  pathname,
+  authStore.auth.isInitialized,
+  authStore.auth.isAuthenticated,
+  authStore.auth.isSubmitting,
+  router,
+  authStore,
+  unProtectedRoutes,
+]);
 
-    initAuth();
-  }, [pathname, authStore.auth.isInitialized, authStore.auth.isAuthenticated, authStore.auth.isSubmitting, router,authStore,unProtectedRoutes]);
-
-  if (!authStore.auth.isInitialized) {
-    return <h1>Loading...</h1>;
-  }
 
   return (
     <AuthContext.Provider value={authStore}>

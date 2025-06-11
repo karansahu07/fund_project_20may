@@ -45,6 +45,7 @@ class AuthStore {
     error: null,
     message: null,
   };
+   logoutRedirecting = false; //  Add this line here
 
   constructor() {
     makeObservable(this, {
@@ -53,6 +54,7 @@ class AuthStore {
       initialize: action,
       setAuthError: action,
       auth: observable,
+      logoutRedirecting: observable, // 👈 Add this
       getRole: computed,
       getUser: computed,
     });
@@ -196,37 +198,41 @@ class AuthStore {
       });
     }
   }
+async logout() {
+  try {
+    runInAction(() => {
+      this.logoutRedirecting = true; // 👈 Redirecting started
+    });
 
-  async logout() {
-    try {
-      await axios.get("/api/auth/logout");
-      runInAction(() => {
-        this.auth.isAuthenticated = false;
-         this.auth.user = { ...initialUser };
-        // this.auth.user = {
-        //   ...initialUser,
-        //   role: this.auth.user.role  //  preserve existing role
-        // };
-        this.auth.message = "Logged Out Successfully";
-        this.auth.error = null;
+    await axios.get("/api/auth/logout");
 
-        console.log("auth state after runInAction:", toJS(this.auth));
+    runInAction(() => {
+      this.auth.isAuthenticated = false;
+      this.auth.user = { ...initialUser };
+      this.auth.message = "Logged Out Successfully";
+      this.auth.error = null;
 
-        // console.log("gdfg",this.auth.user); 
-      });
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("user");
-      }
+      console.log("auth state after runInAction:", toJS(this.auth));
+    });
 
-
-
-    } catch (error) {
-      console.error("Logout failed:", error);
-      runInAction(() => {
-        this.auth.error = "Logout Failed.";
-      });
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
     }
+
+  } catch (error) {
+    console.error("Logout failed:", error);
+    runInAction(() => {
+      this.auth.error = "Logout Failed.";
+    });
+  } finally {
+    setTimeout(() => {
+      runInAction(() => {
+        this.logoutRedirecting = false; // 👈 Redirecting ended after delay
+      });
+    }, 1000); // Delay (optional): adjust if needed
   }
+}
+
 
   setAuthError(err: any) {
     runInAction(() => {
