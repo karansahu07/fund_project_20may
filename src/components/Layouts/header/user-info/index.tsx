@@ -37,7 +37,7 @@ export function UserInfo() {
     authStore.logout();
    // Use the stored role for redirect
   router.push(userRole === "admin" ? "/sign-in/admin" : "/sign-in/employee");
-};
+   };
 
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>

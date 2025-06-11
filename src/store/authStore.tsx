@@ -133,7 +133,7 @@ class AuthStore {
                   username: parsedData.auth.user.username || parsedData.auth.user.email?.split("@")[0] || "",
                 },
               };
-                  this.auth.isAuthenticated = true; // ✅ forcefully set again
+                  this.auth.isAuthenticated = true; //  forcefully set again
               this.auth.message = "Session restored from storage.";
             });
           } else {
@@ -184,13 +184,15 @@ class AuthStore {
           username: data.user.username || data.user.email?.split("@")[0] || "",
           useremail: data.user.email || "",
         };
+        this.lastRole = data.user.role; // 👈 Save role for logout redirect
+
         this.auth.isInitialized = true;
         this.auth.message = "Logged in successfully";
         this.auth.error = null;
         // router.push("/admin/dashboard");
       });
 
-        // ✅ Save auth state to localStorage after successful login
+        //  Save auth state to localStorage after successful login
     this.saveToLocalStorage(); // <--- ADD THIS LINE
 
     } catch (error: any) {
@@ -203,28 +205,38 @@ class AuthStore {
       });
     }
   }
-async logout() {
+  async logout() {
   try {
     runInAction(() => {
-      this.logoutRedirecting = true; // 👈 Redirecting started
+      this.logoutRedirecting = true; //  Redirecting started
     });
 
     await axios.get("/api/auth/logout");
+
+        const previousRole = this.auth.user.role; // 👈 Capture current role
 
     runInAction(() => {
       this.auth.isAuthenticated = false;
       this.auth.user = { ...initialUser };
       this.auth.message = "Logged Out Successfully";
       this.auth.error = null;
-
+        this.lastRole = previousRole; // 👈 Store it for redirect
       console.log("auth state after runInAction:", toJS(this.auth));
     });
 
     if (typeof window !== "undefined") {
       localStorage.removeItem("user");
-    }
 
-  } catch (error) {
+      // ✅ REDIRECT BASED ON ROLE
+      if (this.lastRole === "admin") {
+        window.location.href = "/admin/login";
+      } else if (this.lastRole === "employee") {
+        window.location.href = "/employee/login";
+      } else {
+        window.location.href = "/"; // Fallback to landing page
+      }
+    }
+  }  catch (error) {
     console.error("Logout failed:", error);
     runInAction(() => {
       this.auth.error = "Logout Failed.";
@@ -232,13 +244,13 @@ async logout() {
   } finally {
     setTimeout(() => {
       runInAction(() => {
-        this.logoutRedirecting = false; // 👈 Redirecting ended after delay
+        this.logoutRedirecting = false; //  Redirecting ended after delay
+        lastRole: string | null = null; // 👈 Add this line
+
       });
     }, 1000); // Delay (optional): adjust if needed
   }
 }
-
-
   setAuthError(err: any) {
     runInAction(() => {
       this.auth.error = err;
