@@ -133,6 +133,7 @@ class AuthStore {
                   username: parsedData.auth.user.username || parsedData.auth.user.email?.split("@")[0] || "",
                 },
               };
+                  this.auth.isAuthenticated = true; // ✅ forcefully set again
               this.auth.message = "Session restored from storage.";
             });
           } else {
@@ -188,6 +189,10 @@ class AuthStore {
         this.auth.error = null;
         // router.push("/admin/dashboard");
       });
+
+        // ✅ Save auth state to localStorage after successful login
+    this.saveToLocalStorage(); // <--- ADD THIS LINE
+
     } catch (error: any) {
       runInAction(() => {
         this.auth.error = error.response?.data?.message || "Login failed.";
