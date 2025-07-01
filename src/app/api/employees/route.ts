@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     }
 
     const plainPassword = generateRandomHexPassword();
-    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+    // const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
     const newUser = await User.create({
       firstName,
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       dob,
       dateOfJoining,
       dateOfResigning,
-      password: hashedPassword,
+      password: plainPassword,
       role: 'employee',
       isActive: true
     });

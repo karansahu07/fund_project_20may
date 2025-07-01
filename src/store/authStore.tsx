@@ -46,6 +46,7 @@ class AuthStore {
     message: null,
   };
    logoutRedirecting = false; //  Add this line here
+  lastRole: any;
 
   constructor() {
     makeObservable(this, {
